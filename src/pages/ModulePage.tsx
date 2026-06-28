@@ -1,5 +1,6 @@
 import { Button } from '../components/Button';
 import { Card, CardTitle } from '../components/Card';
+import { DashboardGraphic } from '../components/DashboardGraphic';
 import { Icon } from '../components/Icon';
 import { StatusPill } from '../components/StatusPill';
 import { DonutChart, LineChart } from '../components/SvgCharts';
@@ -22,6 +23,69 @@ const genericCopy: Record<string, { title: string; subtitle: string; cards: stri
 
 export function ModulePage({ id }: ModulePageProps) {
   const page = (modulePages as Record<string, { title: string; subtitle: string; cards: string[][] }>)[id] || genericCopy[id] || genericCopy.proposals;
-  const metricTone = ['blue','green','purple','orange','cyan','red'] as Tone[];
-  return <div className="module-page"><Card className="page-card"><div className="page-head"><div><h2>{page.title}</h2><p>{page.subtitle}</p></div><div className="head-actions"><Button>Export</Button><Button variant="ghost">Open Settings</Button></div></div><div className="mini-kpi-grid six">{page.cards.slice(0,6).map((card, index) => <div className={`mini-kpi tone-${metricTone[index % metricTone.length]}`} key={card[0]}><Icon name={index % 2 ? 'analytics' : 'dashboard'} size={34} /><span>{card[0]}</span><strong>{index % 2 ? 'Active' : 'Ready'}</strong><small>{card[1]}</small></div>)}</div><div className="split-grid"><Card><CardTitle title="Operational Overview" /><LineChart labels={['W1','W2','W3','W4','W5','W6']} series={[{label:'Volume',values:[22,28,31,39,44,52,58,61,68,72,76,84],tone:'blue'},{label:'Health',values:[42,43,47,51,55,58,62,65,69,71,76,80],tone:'green'},{label:'Risk',values:[16,14,15,13,12,13,11,10,9,10,8,7],tone:'red'}]} /></Card><Card><CardTitle title="Allocation Snapshot" /><div className="portfolio-row"><DonutChart data={tierPools.slice(0,5).map((tier) => ({ label: tier.title, value: tier.share, tone: tier.tone }))} centerValue="$38.45M" centerLabel="Total" /><div className="legend-list large">{tierPools.slice(0,5).map((tier) => <span key={tier.id}><i className={`dot tone-bg-${tier.tone}`} />{tier.title}<b>{tier.share}%</b></span>)}</div></div></Card></div><Card><CardTitle title="Work Queue" action={<Button variant="ghost">View All →</Button>} /><table className="data-table"><thead><tr><th>Item</th><th>Status</th><th>Owner</th><th>Priority</th><th>Action</th></tr></thead><tbody>{page.cards.map((card, index) => <tr key={card[0]}><td><b>{card[0]}</b><small>{card[1]}</small></td><td><StatusPill tone={index % 3 === 0 ? 'green' : index % 3 === 1 ? 'blue' : 'orange'}>{index % 3 === 0 ? 'Healthy' : index % 3 === 1 ? 'In Review' : 'Queued'}</StatusPill></td><td>AutoDeFi DAO</td><td>{index + 1}</td><td><Button variant="ghost">Open</Button></td></tr>)}</tbody></table></Card></Card></div>;
+  const metricTone = ['blue', 'green', 'purple', 'orange', 'cyan', 'red'] as Tone[];
+
+  return (
+    <div className="module-page">
+      <Card className="page-card">
+        <div className="page-head">
+          <div>
+            <h2>{page.title}</h2>
+            <p>{page.subtitle}</p>
+          </div>
+          <div className="head-actions">
+            <Button>Export</Button>
+            <Button variant="ghost">Open Settings</Button>
+          </div>
+        </div>
+
+        <DashboardGraphic id={id} title={page.title} />
+
+        <div className="mini-kpi-grid six">
+          {page.cards.slice(0, 6).map((card, index) => (
+            <div className={`mini-kpi tone-${metricTone[index % metricTone.length]}`} key={card[0]}>
+              <Icon name={index % 2 ? 'analytics' : 'dashboard'} size={34} />
+              <span>{card[0]}</span>
+              <strong>{index % 2 ? 'Active' : 'Ready'}</strong>
+              <small>{card[1]}</small>
+            </div>
+          ))}
+        </div>
+
+        <div className="split-grid">
+          <Card>
+            <CardTitle title="Operational Overview" />
+            <LineChart labels={['W1','W2','W3','W4','W5','W6']} series={[{label:'Volume',values:[22,28,31,39,44,52,58,61,68,72,76,84],tone:'blue'},{label:'Health',values:[42,43,47,51,55,58,62,65,69,71,76,80],tone:'green'},{label:'Risk',values:[16,14,15,13,12,13,11,10,9,10,8,7],tone:'red'}]} />
+          </Card>
+          <Card>
+            <CardTitle title="Allocation Snapshot" />
+            <div className="portfolio-row">
+              <DonutChart data={tierPools.slice(0,5).map((tier) => ({ label: tier.title, value: tier.share, tone: tier.tone }))} centerValue="$38.45M" centerLabel="Total" />
+              <div className="legend-list large">
+                {tierPools.slice(0,5).map((tier) => <span key={tier.id}><i className={`dot tone-bg-${tier.tone}`} />{tier.title}<b>{tier.share}%</b></span>)}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <Card>
+          <CardTitle title="Work Queue" action={<Button variant="ghost">View All →</Button>} />
+          <table className="data-table">
+            <thead><tr><th>Item</th><th>Status</th><th>Owner</th><th>Priority</th><th>Action</th></tr></thead>
+            <tbody>
+              {page.cards.map((card, index) => (
+                <tr key={card[0]}>
+                  <td><b>{card[0]}</b><small>{card[1]}</small></td>
+                  <td><StatusPill tone={index % 3 === 0 ? 'green' : index % 3 === 1 ? 'blue' : 'orange'}>{index % 3 === 0 ? 'Healthy' : index % 3 === 1 ? 'In Review' : 'Queued'}</StatusPill></td>
+                  <td>AutoDeFi DAO</td>
+                  <td>{index + 1}</td>
+                  <td><Button variant="ghost">Open</Button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+      </Card>
+    </div>
+  );
 }
