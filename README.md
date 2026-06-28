@@ -9,6 +9,24 @@ This package implements the completed AutoDeFi front-end direction from the chat
 - Full React/TypeScript front-end scaffold.
 - AutoDeFi sidebar and wallet header.
 - SVG logo, SVG icons, SVG vehicle/tier graphics, SVG shield/insurance graphics, SVG chart components.
+- Full tracked SVG dashboard files in `public/assets/svg` for every major AutoDeFi area:
+  - Dashboard Overview
+  - DAO Proposals
+  - DAO Vote
+  - Treasury Management Center
+  - ADF Staking
+  - Lender Pool
+  - Risk & Security Analytics
+  - Revenue Sharing
+  - ADF Token Utility
+  - Governance Dashboard
+  - Audit & Security
+  - Analytics Dashboard
+  - Borrower Portal
+  - Dealer Portal / Block Motors
+  - Capital Yield Portal
+  - Insurance AI Recovery
+  - Admin Command Center
 - Lender Pool sections:
   1. Risk Tier Pool Allocation
   2. Pool Performance Overview
@@ -73,4 +91,4 @@ git push -u origin main
 
 ## Design notes
 
-This front end intentionally avoids raster dashboard screenshots as UI assets. Product graphics are SVG files or SVG React components so the design stays crisp, editable, and GitHub-friendly.
+This front end intentionally avoids raster dashboard screenshots as UI assets. Product graphics are SVG files or SVG React components so the design stays crisp, editable, Webflow-friendly, and GitHub-friendly.
