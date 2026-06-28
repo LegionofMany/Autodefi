@@ -1,46 +1,32 @@
-# AutoDeFi DAO Treasury Management Center
+# AutoDeFi Frontend
 
-Dark fintech Web3 treasury portal for the AutoDeFi decentralized auto loan pool ecosystem.
+GitHub-ready React + TypeScript frontend for the AutoDeFi decentralized auto loan pool ecosystem under Voltaire Protocols.
 
-## Included tabs
+## Included portals
 
-Treasury Operations:
-- Dashboard
-- Treasury Assets
-- Allocations
-- Revenue Streams
-- Reserves
-- Expenditures
-- Budgeting
-- Reports
-- Audit Logs
+- Borrower Portal Dashboard
+- Dealer Portal Dashboard / Block Motors workflow
+- Capital Yield Portal Dashboard
+- DAO & Community Governance Dashboard
+- Risk & Security Analytics Dashboard
+- Insurance AI Recovery Modules Dashboard
+- Loan Servicing Center
+- Insurance Claims Center
+- Treasury Management Center
+- Collections & Recovery Center
+- Investor Portal
+- Dealer Marketplace Network
+- AI Underwriter Center
 
-Treasury Actions:
-- Transfer Funds
-- Swap / Convert
-- Stake Assets
-- Approve Spending
-- Treasury Proposals
+## AutoDeFi rules implemented in the UI
 
-Analytics:
-- Performance
-- Cash Flow
-- Scenario Planning
-- Stress Testing
+- Approved dealer deals are funded in full to the dealer after delivery confirmation.
+- Borrowers repay through regional stable-value rails.
+- ADF is used for staking, collateral, rewards, access, utility, and governance, not as the default borrower repayment currency.
+- Interest yield is distributed to users staked in the matching risk-tier pool.
+- Zonycs.com is represented as the marketplace and recovery/liquidation integration layer.
 
-Configuration:
-- Policies & Rules
-- Multi-Sig Wallets
-- Integrations
-- Settings
-
-## AutoDeFi alignment
-
-The interface follows the AutoDeFi loan pool model with lending reserves, insurance reserves, borrower repayment revenue, dealer funding support, ADF token utility, DAO proposals, multi-signature approval, and treasury audit visibility.
-
-## Run locally
-
-Open `index.html` in a browser, or run:
+## Install
 
 ```bash
 npm install
@@ -51,4 +37,19 @@ npm run dev
 
 ```bash
 npm run build
+npm run preview
 ```
+
+## Environment
+
+Copy `.env.example` to `.env.local` and connect your completed backend:
+
+```bash
+VITE_API_BASE_URL=https://your-api-domain.com
+VITE_HEDERA_NETWORK=testnet
+VITE_ZONYCS_URL=https://zonycs.com
+```
+
+## Repository status
+
+This is the first pushed frontend implementation. It is intentionally frontend-only and backend-ready. Static dashboard fallbacks are included so the UI renders while API endpoints are being connected.
