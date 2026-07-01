@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { dealerNav, dealerPages, dealerProfile, type DealerMetric, type DealerPage, type DealerRailCard, type DealerPipelineStage } from '../../data/dealerPortalData';
 import './dealer.css';
+import './dealer-assets.css';
 
 type ToneVars = CSSProperties & { '--tone-color'?: string };
 
@@ -15,10 +16,78 @@ const toneColors: Record<string, string> = {
   slate: '#94a3b8'
 };
 
+const customerAvatarIds = ['customer-michael-johnson', 'customer-sarah-williams', 'customer-david-brown', 'customer-emily-davis', 'customer-james-wilson', 'customer-ashley-miller'];
+const referralAvatarIds = ['referral-mike-thompson', 'referral-sarah-johnson', 'referral-david-miller', 'referral-lisa-anderson'];
+
+const socialSymbolMap: Record<string, string> = {
+  Facebook: 'facebook',
+  Instagram: 'instagram',
+  'Google Ads': 'google-ads',
+  Google: 'google-ads',
+  YouTube: 'youtube',
+  Email: 'email',
+  Twitter: 'twitter',
+  LinkedIn: 'linkedin',
+  WhatsApp: 'whatsapp',
+  SMS: 'sms',
+  'QR Code': 'qr-code'
+};
+
+const lenderAssets: Record<string, string> = {
+  'AutoDeFi Pool': '/assets/dealer/lenders/autodefi-pool.svg',
+  'OpenRoad Financial': '/assets/dealer/lenders/openroad-financial.svg',
+  'Prime Capital': '/assets/dealer/lenders/prime-capital.svg',
+  'NorthBridge Bank': '/assets/dealer/lenders/northbridge-bank.svg',
+  'First Community': '/assets/dealer/lenders/first-community.svg'
+};
+
+function vehicleAssetFor(value: string) {
+  const key = value.toLowerCase();
+  if (key.includes('mercedes')) return '/assets/dealer/vehicles/vehicle-mercedes-glc-300.svg';
+  if (key.includes('tesla')) return '/assets/dealer/vehicles/vehicle-tesla-model-3.svg';
+  if (key.includes('range rover')) return '/assets/dealer/vehicles/vehicle-range-rover-sport.svg';
+  if (key.includes('bmw')) return '/assets/dealer/vehicles/vehicle-bmw-x5.svg';
+  if (key.includes('ford') || key.includes('f-150')) return '/assets/dealer/vehicles/vehicle-ford-f150.svg';
+  if (key.includes('audi')) return '/assets/dealer/vehicles/vehicle-audi-q7.svg';
+  if (key.includes('jeep')) return '/assets/dealer/vehicles/vehicle-jeep-wrangler.svg';
+  if (key.includes('lexus')) return '/assets/dealer/vehicles/vehicle-lexus-rx350.svg';
+  if (key.includes('ram')) return '/assets/dealer/vehicles/vehicle-ram-1500.svg';
+  if (key.includes('corvette')) return '/assets/dealer/vehicles/vehicle-corvette-stingray.svg';
+  return null;
+}
+
+function campaignAssetFor(value: string) {
+  const key = value.toLowerCase();
+  if (key.includes('truck season')) return '/assets/dealer/campaigns/campaign-truck-season-sales-event.svg';
+  if (key.includes('luxury suv')) return '/assets/dealer/campaigns/campaign-luxury-suv-showcase.svg';
+  if (key.includes('financing made easy')) return '/assets/dealer/campaigns/campaign-financing-made-easy.svg';
+  if (key.includes('email newsletter')) return '/assets/dealer/campaigns/campaign-email-newsletter-may.svg';
+  if (key.includes('referral rewards')) return '/assets/dealer/campaigns/campaign-referral-rewards-program.svg';
+  return null;
+}
+
 function DealerIcon({ name, size = 22 }: { name: string; size?: number }) {
   return (
     <svg className="dealer-icon" width={size} height={size} aria-hidden="true">
       <use href={`/assets/dealer/icons/dealer-icon-sprite.svg#${name}`} />
+    </svg>
+  );
+}
+
+function SocialIcon({ label }: { label: string }) {
+  const symbol = socialSymbolMap[label];
+  if (!symbol) return <DealerIcon name="plus" size={18} />;
+  return (
+    <svg className="dealer-social-icon" width="20" height="20" aria-hidden="true">
+      <use href={`/assets/dealer/icons/social-icon-sprite.svg#${symbol}`} />
+    </svg>
+  );
+}
+
+function AvatarSymbol({ id }: { id: string }) {
+  return (
+    <svg className="dealer-avatar-symbol" aria-hidden="true">
+      <use href={`/assets/dealer/avatars/avatar-placeholders.svg#${id}`} />
     </svg>
   );
 }
@@ -79,6 +148,37 @@ function looksLikeStatus(value: string) {
   return ['active', 'available', 'reserved', 'sold pending', 'inactive', 'new', 'contacted', 'qualified', 'follow-up', 'proposal sent', 'lost / closed', 'funded', 'under review', 'approved', 'funding', 'pre-qualified', 'submitted', 'closed', 'declined', 'tier 1', 'tier 2', 'tier 3', 'tier 4', 'converted', 'paid', 'pending', 'scheduled'].some((term) => key.includes(term));
 }
 
+function TableCell({ pageId, value, rowIndex, cellIndex }: { pageId: string; value: string; rowIndex: number; cellIndex: number }) {
+  const lenderAsset = lenderAssets[value];
+  if (lenderAsset) {
+    return <span className="dealer-lender-cell"><img src={lenderAsset} alt="" /><span>{value}</span></span>;
+  }
+
+  if (cellIndex === 0 && (pageId === 'inventory' || pageId === 'auctions')) {
+    const asset = vehicleAssetFor(value);
+    if (asset) return <span className="dealer-asset-cell"><img src={asset} alt="" /><span>{value}</span></span>;
+  }
+
+  if (cellIndex === 2 && (pageId === 'deals' || pageId === 'financing') && vehicleAssetFor(value)) {
+    return <span className="dealer-vehicle-inline"><img src={vehicleAssetFor(value) || ''} alt="" /><span>{value}</span></span>;
+  }
+
+  if (cellIndex === 0 && pageId === 'marketing-tools') {
+    const asset = campaignAssetFor(value);
+    if (asset) return <span className="dealer-asset-cell"><img src={asset} alt="" /><span>{value}</span></span>;
+  }
+
+  if (cellIndex === 0 && pageId === 'customers') {
+    return <span className="dealer-person-cell"><AvatarSymbol id={customerAvatarIds[rowIndex % customerAvatarIds.length]} /><span>{value}</span></span>;
+  }
+
+  if (cellIndex === 0 && pageId === 'referrals') {
+    return <span className="dealer-person-cell"><AvatarSymbol id={referralAvatarIds[rowIndex % referralAvatarIds.length]} /><span>{value}</span></span>;
+  }
+
+  return looksLikeStatus(value) ? <StatusBadge value={value} /> : <span>{value}</span>;
+}
+
 function DataTable({ page }: { page: DealerPage }) {
   return (
     <section className="dealer-card dealer-table-card">
@@ -102,7 +202,7 @@ function DataTable({ page }: { page: DealerPage }) {
           <tbody>
             {page.table.rows.map((row, rowIndex) => (
               <tr key={`${page.id}-${rowIndex}`}>
-                {row.map((cell, index) => <td key={`${cell}-${index}`}>{looksLikeStatus(cell) ? <StatusBadge value={cell} /> : <span>{cell}</span>}</td>)}
+                {row.map((cell, index) => <td key={`${cell}-${index}`}><TableCell pageId={page.id} value={cell} rowIndex={rowIndex} cellIndex={index} /></td>)}
                 <td className="dealer-row-actions"><button><DealerIcon name="eye" size={16} /></button><button><DealerIcon name="edit" size={16} /></button><button><DealerIcon name="more" size={16} /></button></td>
               </tr>
             ))}
@@ -135,6 +235,7 @@ function Funnel({ items }: { items: string[] }) {
 }
 
 function RailCard({ card }: { card: DealerRailCard }) {
+  const isShareCard = card.title.toLowerCase().includes('share');
   return (
     <section className="dealer-card dealer-rail-card">
       <div className="dealer-card-head"><h3>{card.title}</h3><button>View All</button></div>
@@ -144,7 +245,7 @@ function RailCard({ card }: { card: DealerRailCard }) {
       {card.kind === 'score' && <div className="dealer-score"><strong>{card.value}</strong>{card.subtitle && <span>{card.subtitle}</span>}</div>}
       {card.kind === 'copy' && <div className="dealer-copy-card"><code>{card.value}</code>{card.items.map((item) => <code key={item}>{item}</code>)}</div>}
       {card.kind === 'actions'
-        ? <div className="dealer-action-grid">{card.items.map((item) => <button key={item}><DealerIcon name="plus" size={18} />{item}</button>)}</div>
+        ? <div className="dealer-action-grid">{card.items.map((item) => <button key={item}>{isShareCard ? <SocialIcon label={item} /> : <DealerIcon name="plus" size={18} />}{item}</button>)}</div>
         : <ul className="dealer-list">{card.items.map((item) => <li key={item}><span>{item}</span></li>)}</ul>}
     </section>
   );
