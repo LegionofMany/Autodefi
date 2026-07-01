@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96" role="img" aria-labelledby="title desc">
+  <title id="title">AutoDeFi primary logo</title>
+  <desc id="desc">Blue AD monogram with AUTO in white and DEFI in electric blue.</desc>
+  <defs>
+    <linearGradient id="ad-blue" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#20c8ff"/>
+      <stop offset="0.55" stop-color="#1677ff"/>
+      <stop offset="1" stop-color="#0a42ff"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="420" height="96" fill="transparent"/>
+  <g filter="url(#glow)">
+    <path d="M38 72 70 20h22l-32 52H38Z" fill="url(#ad-blue)"/>
+    <path d="M84 20h29c25 0 43 15 43 37s-18 37-43 37H84l21-34h12c10 0 17-6 17-15s-7-15-17-15h-9L84 20Z" fill="url(#ad-blue)"/>
+    <path d="M60 72h40l-14-23H74L60 72Z" fill="#20c8ff" opacity=".92"/>
+  </g>
+  <text x="176" y="61" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800" letter-spacing="-.06em">AUTO</text>
+  <text x="280" y="61" fill="#1677ff" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="900" letter-spacing="-.06em">DEFI</text>
+</svg>
