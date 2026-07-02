@@ -10,6 +10,7 @@ The dashboard aggregation layer gives the frontend clean summary endpoints inste
 - GET /api/finance/dashboard/lp/:walletAddress
 - GET /api/finance/dashboard/treasury
 - GET /api/finance/dashboard/risk
+- GET /api/finance/dashboard/loan-servicing
 
 ## Dashboard Rule
 
