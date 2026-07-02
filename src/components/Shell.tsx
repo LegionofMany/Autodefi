@@ -11,6 +11,12 @@ type ShellProps = {
   children: ReactNode;
 };
 
+function titleForView(activeView: string) {
+  if (activeView === 'lender-pool') return 'Lender Pool';
+  if (activeView === 'loan-servicing') return 'Loan Servicing';
+  return navItems.find((item) => item.id === activeView)?.label || 'AutoDeFi';
+}
+
 export function Shell({ activeView, onNavigate, children }: ShellProps) {
   return (
     <div className="app-shell">
@@ -40,6 +46,10 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
             </button>
           ))}
           <p>Portals</p>
+          <button type="button" className={activeView === 'loan-servicing' ? 'active' : ''} onClick={() => onNavigate('loan-servicing')}>
+            <Icon name="borrower" size={22} />
+            <span>Loan Servicing</span>
+          </button>
           {navItems.filter((item) => item.group === 'portal').map((item) => (
             <button key={item.id} type="button" className={activeView === item.id ? 'active' : ''} onClick={() => onNavigate(item.id)}>
               <Icon name={item.icon} size={22} />
@@ -56,7 +66,7 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
       <main className="main-panel">
         <header className="topbar">
           <div>
-            <h1>{activeView === 'lender-pool' ? 'Lender Pool' : navItems.find((item) => item.id === activeView)?.label || 'AutoDeFi'}</h1>
+            <h1>{titleForView(activeView)}</h1>
             <p>Provide liquidity, earn yield, and power auto loan origination.</p>
           </div>
           <div className="wallet-strip">
