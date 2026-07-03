@@ -17,6 +17,12 @@ This package implements the completed AutoDeFi front-end direction from the chat
 - API service layer ready to connect through `VITE_AUTODEFI_API_BASE`.
 - Static seed data included so the UI can render immediately while backend endpoints are wired.
 
+## Whitepaper
+
+The current AutoDeFi / ADF Token whitepaper is available at [`docs/WHITEPAPER.md`](docs/WHITEPAPER.md).
+
+It covers the AutoDeFi ecosystem, ADF token utility, proposed tokenomics framework, Hedera direction, ZONYCS marketplace integration, Reqrium identity and verification layer, loan lifecycle, risk tiers, treasury, DAO governance, compliance, security, roadmap, and risk factors.
+
 ## Install
 
 Run `npm install` and then `npm run dev`.
