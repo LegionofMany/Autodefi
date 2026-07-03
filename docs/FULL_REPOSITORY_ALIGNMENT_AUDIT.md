@@ -52,34 +52,22 @@ The AI Underwriting & Risk Command Suite is locked in:
 
 Locked SVG files:
 
-1. `autodefi-ai-underwriter.svg`
-2. `autodefi-risk-modules.svg`
-3. `autodefi-identity-kyc.svg`
-4. `autodefi-income-verification.svg`
-5. `autodefi-bank-analysis.svg`
-6. `autodefi-vehicle-valuation.svg`
-7. `autodefi-fraud-signals.svg`
-8. `autodefi-conditional-approvals.svg`
-9. `autodefi-funding-readiness.svg`
-10. `autodefi-analytics.svg`
-11. `autodefi-settings.svg`
+1. `autodefi-dashboard.svg`
+2. `autodefi-ai-underwriter.svg`
+3. `autodefi-risk-modules.svg`
+4. `autodefi-identity-kyc.svg`
+5. `autodefi-income-verification.svg`
+6. `autodefi-bank-analysis.svg`
+7. `autodefi-vehicle-valuation.svg`
+8. `autodefi-fraud-signals.svg`
+9. `autodefi-conditional-approvals.svg`
+10. `autodefi-funding-readiness.svg`
+11. `autodefi-analytics.svg`
+12. `autodefi-settings.svg`
 
 ## V1 documentation audit alignment
 
-The repo now includes the docs required by `scripts/audit-v1-docs.ts`:
-
-- `docs/ARCHITECTURE.md`
-- `docs/V1_SCOPE.md`
-- `docs/DEAL_FLOW.md`
-- `docs/ADF_UTILITY.md`
-- `docs/STABLECOIN_RAILS.md`
-- `docs/HEDERA.md`
-- `docs/API_CONTRACTS.md`
-- `docs/DEPLOYMENT_V1.md`
-- `docs/FRONTEND_FALLBACKS_V1.md`
-- `docs/VISUAL_SYSTEM_V1.md`
-- `docs/V1_COMPLETION_GATE.md`
-- `docs/V1_1_V2_BACKLOG.md`
+The repo now includes the docs required by `scripts/audit-v1-docs.ts`.
 
 ## Audit commands
 
@@ -91,9 +79,7 @@ The repository exposes:
 
 ## Forward audit notes
 
-The AI Underwriting SVG suite is currently locked as design/handoff assets. The next development phase should decide whether to add the 11 AI underwriting screens as clickable React routes inside the live app navigation.
-
-Production deployment still requires local/CI execution of build and audit commands, backend connection, provider credentials, compliance review, and final testnet/mainnet configuration.
+The AI Underwriting SVG suite is currently locked as design/handoff assets. The next development phase should decide whether to add the 12-screen AI underwriting dashboard family as clickable React routes inside the live app navigation.
 
 ## Final audit result
 
