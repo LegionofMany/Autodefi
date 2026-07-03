@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "lint:types": "tsc -b --pretty",
-    "audit:v1-docs": "tsx scripts/audit-v1-docs.ts"
+    "audit:v1-docs": "tsx scripts/audit-v1-docs.ts",
+    "audit:ai-underwriting-svg-lock": "tsx scripts/audit-ai-underwriting-svg-lock.ts"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
