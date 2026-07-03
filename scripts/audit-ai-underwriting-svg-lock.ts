@@ -4,6 +4,7 @@ const requiredFiles = [
   "docs/AI_UNDERWRITING_SVG_LOCK.md",
   "docs/AI_UNDERWRITING_BACKWARD_FORWARD_AUDIT.md",
   "public/assets/svg/ai-underwriting-suite/README.md",
+  "public/assets/svg/ai-underwriting-suite/autodefi-dashboard.svg",
   "public/assets/svg/ai-underwriting-suite/autodefi-ai-underwriter.svg",
   "public/assets/svg/ai-underwriting-suite/autodefi-risk-modules.svg",
   "public/assets/svg/ai-underwriting-suite/autodefi-identity-kyc.svg",
