@@ -27,6 +27,7 @@ The new suite preserves the existing V1 visual system:
 
 The new suite does not replace the earlier AutoDeFi V1 dashboards. It adds a dedicated underwriting/risk command suite for:
 
+- Main Dashboard
 - AI Underwriter
 - Risk Modules
 - Identity & KYC
@@ -90,7 +91,7 @@ npm run audit:ai-underwriting-svg-lock
 
 ## Current Locked File Count
 
-Expected locked SVG tab files: 11
+Expected locked SVG tab files: 12
 
 Expected support files:
 
@@ -101,4 +102,4 @@ Expected support files:
 
 ## Upload Gate
 
-The suite is considered uploaded when all 11 SVG files, both docs, the suite README, and the audit script exist on the repository branch and `package.json` exposes the audit command.
+The suite is considered uploaded when all 12 SVG files, both docs, the suite README, and the audit script exist on the repository branch and `package.json` exposes the audit command.
