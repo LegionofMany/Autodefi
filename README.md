@@ -2,7 +2,7 @@
 
 Production-ready React + TypeScript + Vite front end for the AutoDeFi / Voltaire Protocols auto-loan liquidity system.
 
-This package implements the completed AutoDeFi front-end direction from the chat: dark fintech UI, neon blue/green/purple accents, SVG-only product graphics, lender pool screens, DAO navigation, risk, revenue, treasury, staking, governance, borrower, dealer, capital-yield, insurance/recovery, admin command center screens, and the locked AI Underwriting & Risk Command Suite SVG dashboard family.
+This package implements the completed AutoDeFi front-end direction from the chat: dark fintech UI, neon blue/green/purple accents, SVG-only product graphics, lender pool screens, DAO navigation, risk, revenue, treasury, staking, governance, borrower, dealer, capital-yield, insurance/recovery, admin command center screens, the locked AI Underwriting & Risk Command Suite SVG dashboard family, and the locked AutoDeFi DAO Treasury Management Center V1.
 
 ## What is included
 
@@ -11,6 +11,7 @@ This package implements the completed AutoDeFi front-end direction from the chat
 - SVG logo, SVG icons, SVG vehicle/tier graphics, SVG shield/insurance graphics, SVG chart components.
 - Full tracked SVG dashboard files in `public/assets/svg` for every major AutoDeFi area.
 - Locked AI Underwriting & Risk Command Suite SVGs in `public/assets/svg/ai-underwriting-suite`.
+- Locked AutoDeFi DAO Treasury Management Center pages for dashboard, assets, allocations, revenue streams, reserves, expenditures, budgeting, reports, and audit logs.
 - Lender Pool sections for risk tiers, performance, origination, risk credit, rewards, and utilization.
 - DAO pages for dashboard, proposals, vote, treasury, staking, risk management, revenue sharing, token utility, governance, audit/security, and analytics.
 - AutoDeFi portal pages for borrower, dealer, capital yield, insurance/recovery, and admin command.
@@ -27,7 +28,7 @@ Run `npm run build`.
 
 ## Audits
 
-Run `npm run audit:v1-docs` and `npm run audit:ai-underwriting-svg-lock`.
+Run `npm run audit:v1-docs`, `npm run audit:ai-underwriting-svg-lock`, and `npm run audit:treasury-management-center`.
 
 ## Backend connection
 
@@ -38,3 +39,5 @@ Copy `.env.example` to `.env` and set `VITE_AUTODEFI_API_BASE` to the backend do
 This front end intentionally avoids raster dashboard screenshots as UI assets. Product graphics are SVG files or SVG React components so the design stays crisp, editable, Webflow-friendly, and GitHub-friendly.
 
 The AI Underwriting & Risk Command Suite is locked by `docs/AI_UNDERWRITING_SVG_LOCK.md` and audited by `scripts/audit-ai-underwriting-svg-lock.ts`.
+
+The AutoDeFi DAO Treasury Management Center V1 is locked by `docs/TREASURY_MANAGEMENT_CENTER_LOCK.md` and audited by `scripts/audit-treasury-management-center.ts`.
