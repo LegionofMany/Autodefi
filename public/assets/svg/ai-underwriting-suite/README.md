@@ -4,17 +4,18 @@ This folder contains the locked editable SVG files for the AutoDeFi DAO underwri
 
 ## Locked files
 
-1. `autodefi-ai-underwriter.svg`
-2. `autodefi-risk-modules.svg`
-3. `autodefi-identity-kyc.svg`
-4. `autodefi-income-verification.svg`
-5. `autodefi-bank-analysis.svg`
-6. `autodefi-vehicle-valuation.svg`
-7. `autodefi-fraud-signals.svg`
-8. `autodefi-conditional-approvals.svg`
-9. `autodefi-funding-readiness.svg`
-10. `autodefi-analytics.svg`
-11. `autodefi-settings.svg`
+1. `autodefi-dashboard.svg`
+2. `autodefi-ai-underwriter.svg`
+3. `autodefi-risk-modules.svg`
+4. `autodefi-identity-kyc.svg`
+5. `autodefi-income-verification.svg`
+6. `autodefi-bank-analysis.svg`
+7. `autodefi-vehicle-valuation.svg`
+8. `autodefi-fraud-signals.svg`
+9. `autodefi-conditional-approvals.svg`
+10. `autodefi-funding-readiness.svg`
+11. `autodefi-analytics.svg`
+12. `autodefi-settings.svg`
 
 ## Usage
 
