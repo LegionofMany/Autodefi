@@ -92,6 +92,7 @@ Repository rule: no raster dashboard screenshots are accepted as final UI assets
 
 ## Locked Tab Files
 
+- `autodefi-dashboard.svg`
 - `autodefi-ai-underwriter.svg`
 - `autodefi-risk-modules.svg`
 - `autodefi-identity-kyc.svg`
@@ -105,6 +106,9 @@ Repository rule: no raster dashboard screenshots are accepted as final UI assets
 - `autodefi-settings.svg`
 
 ## Locked Tab Purposes
+
+### Dashboard
+Unified command overview across underwriting, risk, identity, income, banking, valuation, fraud, approvals, funding, analytics, and settings.
 
 ### AI Underwriter
 Automated borrower risk assessment and approval workflow.
@@ -169,16 +173,3 @@ status-pill
 action-button
 footer-compliance
 ```
-
-## Forward-Audit Requirement
-
-Before any implementation work begins, confirm that new dashboard code keeps the visual system in sync with:
-
-- `docs/VISUAL_SYSTEM_V1.md`
-- `docs/V1_SCOPE.md`
-- existing SVG-only asset rule in the README
-- the newly locked files in `public/assets/svg/ai-underwriting-suite/`
-
-## Final Lock Statement
-
-These files lock the AI underwriting dashboard family as the approved AutoDeFi DAO underwriting/risk command design system. Future edits must preserve shell layout, color semantics, nav order, component naming, SVG-first asset policy, and tab-specific content intent unless the owner explicitly unlocks or replaces a parameter.
