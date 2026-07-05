@@ -24,7 +24,7 @@ export default function App() {
 
   let content = <ModulePage id={activeView} />;
   if (activeView === 'lender-pool') content = <LenderPool />;
-  if (activeView === 'ai-underwriter-v2') content = <AIUnderwriterCommandCenter />;
+  if (activeView === 'ai-underwriter-v2') content = <AIUnderwriterCommandCenter onNavigate={setActiveView} />;
   if (activeView === 'ai-underwriter-v2-bureau') content = <AIUnderwriterBureauAudit />;
   if (activeView === 'ai-underwriter-v2-income') content = <AIUnderwriterIncomeAudit />;
   if (activeView === 'ai-underwriter-v2-employment') content = <AIUnderwriterEmploymentAudit />;
