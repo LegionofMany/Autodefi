@@ -145,6 +145,7 @@ export function AIUnderwriterCommandCenter({ onNavigate }: PageProps) {
           </div>
           <div className="ai-engine-footer">
             <strong>15-Field AI Underwriting Analysis</strong>
+            <button type="button" onClick={() => onNavigate?.('ai-underwriter-v2-backend-brain')}>Backend Brain →</button>
             <button type="button" onClick={() => onNavigate?.('ai-underwriter-v2-audit-program-settings')}>View Settings →</button>
           </div>
         </main>
