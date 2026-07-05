@@ -18,6 +18,7 @@ import { AIUnderwriterBestFundingSource } from './pages/AIUnderwriterBestFunding
 import { AIUnderwriterYieldToLenders } from './pages/AIUnderwriterYieldToLenders';
 import { AIUnderwriterFinalAction } from './pages/AIUnderwriterFinalAction';
 import { AIUnderwriterAuditProgramSettings } from './pages/AIUnderwriterAuditProgramSettings';
+import { AIUnderwriterBackendBrainConsole } from './pages/AIUnderwriterBackendBrainConsole';
 
 export default function App() {
   const [activeView, setActiveView] = useState('lender-pool');
@@ -25,6 +26,7 @@ export default function App() {
   let content = <ModulePage id={activeView} />;
   if (activeView === 'lender-pool') content = <LenderPool />;
   if (activeView === 'ai-underwriter-v2') content = <AIUnderwriterCommandCenter onNavigate={setActiveView} />;
+  if (activeView === 'ai-underwriter-v2-backend-brain') content = <AIUnderwriterBackendBrainConsole />;
   if (activeView === 'ai-underwriter-v2-bureau') content = <AIUnderwriterBureauAudit />;
   if (activeView === 'ai-underwriter-v2-income') content = <AIUnderwriterIncomeAudit />;
   if (activeView === 'ai-underwriter-v2-employment') content = <AIUnderwriterEmploymentAudit />;
