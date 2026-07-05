@@ -1,10 +1,32 @@
 import type { ReactNode } from 'react';
 import { auditModules, aiUnderwriterStatusMetrics, commandCenterMetrics, v1DecisionSnapshot, v2ShadowAuditSnapshot } from '../features/ai-underwriter/aiUnderwriterV2Data';
 import { runRecursiveShadowAudit } from '../features/ai-underwriter/recursiveShadowAudit';
+import { runV2BackwardForwardAudit } from '../features/ai-underwriter/v2BackwardForwardAudit';
 import type { AuditMetric, AuditModuleSummary } from '../features/ai-underwriter/types';
 import './aiUnderwriterV2.css';
 
 const auditResult = runRecursiveShadowAudit();
+const backwardForwardAudit = runV2BackwardForwardAudit();
+
+const routeByModuleId: Record<string, string> = {
+  'bureau-audit': 'ai-underwriter-v2-bureau',
+  'income-audit': 'ai-underwriter-v2-income',
+  'employment-audit': 'ai-underwriter-v2-employment',
+  'residence-audit': 'ai-underwriter-v2-residence',
+  'wallet-audit': 'ai-underwriter-v2-wallet',
+  'on-chain-audit': 'ai-underwriter-v2-on-chain',
+  'vehicle-audit': 'ai-underwriter-v2-vehicle',
+  'collateral-audit': 'ai-underwriter-v2-collateral',
+  'market-risk-audit': 'ai-underwriter-v2-market-risk',
+  'approval-probability': 'ai-underwriter-v2-approval-probability',
+  'default-risk': 'ai-underwriter-v2-default-risk',
+  'best-funding-source': 'ai-underwriter-v2-best-funding-source',
+  'yield-to-lenders': 'ai-underwriter-v2-yield-to-lenders',
+  'final-action': 'ai-underwriter-v2-final-action',
+  'audit-program-settings': 'ai-underwriter-v2-audit-program-settings'
+};
+
+type PageProps = { onNavigate?: (viewId: string) => void };
 
 function ToneBadge({ tone, children }: { tone: string; children: ReactNode }) {
   return <span className={`ai-tone ai-tone-${tone}`}>{children}</span>;
@@ -31,9 +53,10 @@ function RingScore({ value, label, tone = 'green' }: { value: number | string; l
   );
 }
 
-function ModuleNode({ module }: { module: AuditModuleSummary }) {
+function ModuleNode({ module, onNavigate }: { module: AuditModuleSummary; onNavigate?: (viewId: string) => void }) {
+  const route = routeByModuleId[module.id];
   return (
-    <button className={`ai-module-node status-${module.status}`} type="button">
+    <button className={`ai-module-node status-${module.status}`} type="button" onClick={() => route && onNavigate?.(route)}>
       <span>{module.moduleNumber}</span>
       <b>{module.label}</b>
       <small>{module.shortLabel}</small>
@@ -50,7 +73,7 @@ function MetricRow({ metric }: { metric: AuditMetric }) {
   );
 }
 
-export function AIUnderwriterCommandCenter() {
+export function AIUnderwriterCommandCenter({ onNavigate }: PageProps) {
   const primaryModules = auditModules.filter((module) => module.moduleNumber <= 14);
   const settingsModule = auditModules.find((module) => module.id === 'audit-program-settings');
   const leftModules = primaryModules.slice(0, 7);
@@ -95,7 +118,7 @@ export function AIUnderwriterCommandCenter() {
             <MetricRow metric={{ label: 'Recommended Tier', value: v1DecisionSnapshot.recommendedTier, detail: '', tone: 'cyan' }} />
             <MetricRow metric={{ label: 'V1 Action', value: v1DecisionSnapshot.action.replaceAll('_', ' ').toUpperCase(), detail: '', tone: 'green' }} />
           </div>
-          <button className="ai-wide-button" type="button">View Full Application →</button>
+          <button className="ai-wide-button" type="button" onClick={() => onNavigate?.('ai-underwriter-v2-final-action')}>View Final Action →</button>
         </aside>
 
         <main className="ai-engine-card ai-card">
@@ -105,7 +128,7 @@ export function AIUnderwriterCommandCenter() {
           </div>
           <div className="ai-engine-map">
             <div className="ai-module-column">
-              {leftModules.map((module) => <ModuleNode key={module.id} module={module} />)}
+              {leftModules.map((module) => <ModuleNode key={module.id} module={module} onNavigate={onNavigate} />)}
             </div>
             <div className="ai-car-core">
               <div className="ai-orbit one" />
@@ -117,12 +140,12 @@ export function AIUnderwriterCommandCenter() {
               </div>
             </div>
             <div className="ai-module-column">
-              {rightModules.map((module) => <ModuleNode key={module.id} module={module} />)}
+              {rightModules.map((module) => <ModuleNode key={module.id} module={module} onNavigate={onNavigate} />)}
             </div>
           </div>
           <div className="ai-engine-footer">
             <strong>15-Field AI Underwriting Analysis</strong>
-            <button type="button">View All Modules →</button>
+            <button type="button" onClick={() => onNavigate?.('ai-underwriter-v2-audit-program-settings')}>View Settings →</button>
           </div>
         </main>
 
@@ -144,8 +167,8 @@ export function AIUnderwriterCommandCenter() {
 
       <section className="ai-card ai-risk-strip">
         <div className="ai-card-title">
-          <h3>Risk Breakdown</h3>
-          <ToneBadge tone="green">V1 + V2 Compared</ToneBadge>
+          <h3>Backward / Forward Audit</h3>
+          <ToneBadge tone={backwardForwardAudit.forwardAuditPassed ? 'green' : 'yellow'}>{backwardForwardAudit.forwardAuditPassed ? 'Locked' : 'Watch'}</ToneBadge>
         </div>
         <div className="ai-risk-grid">
           {commandCenterMetrics.map((metric) => (
@@ -194,16 +217,16 @@ export function AIUnderwriterCommandCenter() {
 
         <div className="ai-card">
           <div className="ai-card-title">
-            <h3>Phase 1 Controls</h3>
+            <h3>Phase Completion Controls</h3>
             <ToneBadge tone="green">Safe</ToneBadge>
           </div>
           <div className="ai-control-grid">
-            <div><span>Promotion Locked</span><strong>Yes</strong></div>
-            <div><span>Can Update V1</span><strong>No</strong></div>
-            <div><span>Human Approval</span><strong>Required</strong></div>
-            <div><span>On-Chain Module</span><strong>Included</strong></div>
+            <div><span>Modules Complete</span><strong>{backwardForwardAudit.completedModuleCount}/15</strong></div>
+            <div><span>Sequence Locked</span><strong>{backwardForwardAudit.moduleSequenceLocked ? 'Yes' : 'No'}</strong></div>
+            <div><span>Backward Audit</span><strong>{backwardForwardAudit.backwardAuditPassed ? 'Pass' : 'Watch'}</strong></div>
+            <div><span>Forward Audit</span><strong>{backwardForwardAudit.forwardAuditPassed ? 'Pass' : 'Watch'}</strong></div>
+            <div><span>Promotion Gate</span><strong>{backwardForwardAudit.promotionGatePassed ? 'Locked' : 'Review'}</strong></div>
             <div><span>Settings Module</span><strong>{settingsModule ? 'Included' : 'Missing'}</strong></div>
-            <div><span>Next Action</span><strong>Page 1</strong></div>
           </div>
         </div>
       </section>
