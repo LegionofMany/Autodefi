@@ -1,3 +1,4 @@
+export * from './api';
 export * from './auditLogService';
 export * from './brainTypes';
 export * from './governanceWorkflow';
