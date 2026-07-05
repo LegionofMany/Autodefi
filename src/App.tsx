@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Shell } from './components/Shell';
 import { LenderPool } from './pages/LenderPool';
 import { ModulePage } from './pages/ModulePage';
+import { GeneralPublicMain } from './pages/GeneralPublicMain';
+import { DealerDashboardMain } from './pages/DealerDashboardMain';
+import { AdminMain } from './pages/AdminMain';
 import { AIUnderwriterCommandCenter } from './pages/AIUnderwriterCommandCenter';
 import { AIUnderwriterBureauAudit } from './pages/AIUnderwriterBureauAudit';
 import { AIUnderwriterIncomeAudit } from './pages/AIUnderwriterIncomeAudit';
@@ -21,9 +24,12 @@ import { AIUnderwriterAuditProgramSettings } from './pages/AIUnderwriterAuditPro
 import { AIUnderwriterBackendBrainConsole } from './pages/AIUnderwriterBackendBrainConsole';
 
 export default function App() {
-  const [activeView, setActiveView] = useState('lender-pool');
+  const [activeView, setActiveView] = useState('general-public-main');
 
   let content = <ModulePage id={activeView} />;
+  if (activeView === 'general-public-main') content = <GeneralPublicMain onNavigate={setActiveView} />;
+  if (activeView === 'dealer-dashboard-main') content = <DealerDashboardMain onNavigate={setActiveView} />;
+  if (activeView === 'admin-main') content = <AdminMain onNavigate={setActiveView} />;
   if (activeView === 'lender-pool') content = <LenderPool />;
   if (activeView === 'ai-underwriter-v2') content = <AIUnderwriterCommandCenter onNavigate={setActiveView} />;
   if (activeView === 'ai-underwriter-v2-backend-brain') content = <AIUnderwriterBackendBrainConsole />;
