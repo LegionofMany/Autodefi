@@ -1,5 +1,6 @@
 import { bureauAuditModule } from '../features/ai-underwriter/bureauAuditModule';
 import './aiUnderwriterV2.css';
+import './aiUnderwriterBureau.css';
 
 export function AIUnderwriterBureauAudit() {
   return (
