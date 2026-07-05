@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { auditModules, aiUnderwriterStatusMetrics, commandCenterMetrics, v1DecisionSnapshot, v2ShadowAuditSnapshot } from '../features/ai-underwriter/aiUnderwriterV2Data';
 import { runRecursiveShadowAudit } from '../features/ai-underwriter/recursiveShadowAudit';
 import type { AuditMetric, AuditModuleSummary } from '../features/ai-underwriter/types';
@@ -5,7 +6,7 @@ import './aiUnderwriterV2.css';
 
 const auditResult = runRecursiveShadowAudit();
 
-function ToneBadge({ tone, children }: { tone: string; children: React.ReactNode }) {
+function ToneBadge({ tone, children }: { tone: string; children: ReactNode }) {
   return <span className={`ai-tone ai-tone-${tone}`}>{children}</span>;
 }
 
@@ -163,7 +164,7 @@ export function AIUnderwriterCommandCenter() {
         <div className="ai-card">
           <div className="ai-card-title">
             <h3>V2 Shadow Audit</h3>
-            <ToneBadge tone="orange">Cannot Mutate V1</ToneBadge>
+            <ToneBadge tone="orange">Cannot Update V1</ToneBadge>
           </div>
           <div className="ai-summary-list">
             <MetricRow metric={{ label: 'Mode', value: v2ShadowAuditSnapshot.mode, detail: '', tone: 'orange' }} />
@@ -198,7 +199,7 @@ export function AIUnderwriterCommandCenter() {
           </div>
           <div className="ai-control-grid">
             <div><span>Promotion Locked</span><strong>Yes</strong></div>
-            <div><span>Can Mutate V1</span><strong>No</strong></div>
+            <div><span>Can Update V1</span><strong>No</strong></div>
             <div><span>Human Approval</span><strong>Required</strong></div>
             <div><span>On-Chain Module</span><strong>Included</strong></div>
             <div><span>Settings Module</span><strong>{settingsModule ? 'Included' : 'Missing'}</strong></div>
