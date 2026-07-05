@@ -11,6 +11,12 @@ type ShellProps = {
   children: ReactNode;
 };
 
+const viewTitle = (activeView: string) => {
+  if (activeView === 'lender-pool') return 'Lender Pool';
+  if (activeView === 'ai-underwriter-v2') return 'AI Underwriter V2';
+  return navItems.find((item) => item.id === activeView)?.label || 'AutoDeFi';
+};
+
 export function Shell({ activeView, onNavigate, children }: ShellProps) {
   return (
     <div className="app-shell">
@@ -32,6 +38,11 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
 
         <nav className="side-nav" aria-label="AutoDeFi navigation">
           <p>DAO</p>
+          <button type="button" className={activeView === 'ai-underwriter-v2' ? 'active' : ''} onClick={() => onNavigate('ai-underwriter-v2')}>
+            <Icon name="risk" size={22} />
+            <span>AI Underwriter V2</span>
+            <em>New</em>
+          </button>
           {navItems.filter((item) => item.group === 'dao').map((item) => (
             <button key={item.id} type="button" className={activeView === item.id ? 'active' : ''} onClick={() => onNavigate(item.id)}>
               <Icon name={item.icon} size={22} />
@@ -56,7 +67,7 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
       <main className="main-panel">
         <header className="topbar">
           <div>
-            <h1>{activeView === 'lender-pool' ? 'Lender Pool' : navItems.find((item) => item.id === activeView)?.label || 'AutoDeFi'}</h1>
+            <h1>{viewTitle(activeView)}</h1>
             <p>Provide liquidity, earn yield, and power auto loan origination.</p>
           </div>
           <div className="wallet-strip">
