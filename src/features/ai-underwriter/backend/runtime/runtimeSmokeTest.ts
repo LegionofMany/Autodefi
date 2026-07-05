@@ -13,7 +13,8 @@ export async function runV2RuntimeSmokeTest() {
     requestId: 'smoke-create-v1'
   });
 
-  const decisionId = createResponse.body.data?.backendBrain.v1Decision.decisionId;
+  const createData = createResponse.body.data as { backendBrain?: { v1Decision?: { decisionId?: string } } } | undefined;
+  const decisionId = createData?.backendBrain?.v1Decision?.decisionId ?? 'missing-decision-id';
 
   const snapshotResponse = await dispatchV2RuntimeRoute({
     method: 'GET',
