@@ -18,4 +18,19 @@ export const dashboardSvgAssets: Record<string, string> = {
   'admin-command': '/assets/svg/admin-command.svg',
 };
 
+export const insurancePoolSuiteSvgAssets: Record<string, string> = {
+  'insurance-pool': '/assets/svg/insurance-pool-suite/insurance-pool-dashboard.svg',
+  policies: '/assets/svg/insurance-pool-suite/policies.svg',
+  claims: '/assets/svg/insurance-pool-suite/claims.svg',
+  'risk-tiers': '/assets/svg/insurance-pool-suite/risk-tiers.svg',
+  reserves: '/assets/svg/insurance-pool-suite/reserves.svg',
+  reinsurance: '/assets/svg/insurance-pool-suite/reinsurance.svg',
+  'staking-ins': '/assets/svg/insurance-pool-suite/staking-ins.svg',
+  governance: '/assets/svg/insurance-pool-suite/governance.svg',
+  reports: '/assets/svg/insurance-pool-suite/reports.svg',
+  analytics: '/assets/svg/insurance-pool-suite/analytics.svg',
+  settings: '/assets/svg/insurance-pool-suite/settings.svg',
+};
+
 export const fallbackDashboardSvg = '/assets/svg/dashboard-overview.svg';
+export const fallbackInsurancePoolSuiteSvg = '/assets/svg/insurance-pool-suite/insurance-pool-dashboard.svg';
