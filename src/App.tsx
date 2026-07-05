@@ -7,6 +7,7 @@ import { AIUnderwriterBureauAudit } from './pages/AIUnderwriterBureauAudit';
 import { AIUnderwriterIncomeAudit } from './pages/AIUnderwriterIncomeAudit';
 import { AIUnderwriterEmploymentAudit } from './pages/AIUnderwriterEmploymentAudit';
 import { AIUnderwriterResidenceAudit } from './pages/AIUnderwriterResidenceAudit';
+import { AIUnderwriterWalletAudit } from './pages/AIUnderwriterWalletAudit';
 
 export default function App() {
   const [activeView, setActiveView] = useState('lender-pool');
@@ -18,6 +19,7 @@ export default function App() {
   if (activeView === 'ai-underwriter-v2-income') content = <AIUnderwriterIncomeAudit />;
   if (activeView === 'ai-underwriter-v2-employment') content = <AIUnderwriterEmploymentAudit />;
   if (activeView === 'ai-underwriter-v2-residence') content = <AIUnderwriterResidenceAudit />;
+  if (activeView === 'ai-underwriter-v2-wallet') content = <AIUnderwriterWalletAudit />;
 
   return (
     <Shell activeView={activeView} onNavigate={setActiveView}>
