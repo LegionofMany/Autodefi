@@ -1,0 +1,23 @@
+{
+  "package": "AutoDeFi_ZONYCS_Phase_0_Dev_Turnover",
+  "created": "2026-07-05",
+  "repository_target": "LegionofMany/Autodefi",
+  "branch": "dev-turnover-phase-0-zonycs-adoption",
+  "status": "Phase 0 / North Star handoff, not final build spec",
+  "primary_visual_status": "Original PNG exists in the local ChatGPT turnover ZIP. GitHub connector supports UTF-8 text file commits here, so the branch contains the full text handoff and map summary; binary image should be uploaded manually if needed.",
+  "phase_order": [
+    "ZONYCS adoption",
+    "ADF token launch and pool",
+    "DeFi options"
+  ],
+  "developer_starting_scope": "Build ZONYCS dealership adoption engine first: dealer onboarding, listings, regional rep CRM, admin command center, analytics.",
+  "pending_founder_input": [
+    "Regional representative payroll percentages",
+    "territory/account ownership rules",
+    "renewal attribution rules",
+    "ADF tokenomics",
+    "pool rules",
+    "full compliance/legal review",
+    "final MVP build tickets"
+  ]
+}
