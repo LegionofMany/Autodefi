@@ -17,6 +17,7 @@ import { AIUnderwriterDefaultRisk } from './pages/AIUnderwriterDefaultRisk';
 import { AIUnderwriterBestFundingSource } from './pages/AIUnderwriterBestFundingSource';
 import { AIUnderwriterYieldToLenders } from './pages/AIUnderwriterYieldToLenders';
 import { AIUnderwriterFinalAction } from './pages/AIUnderwriterFinalAction';
+import { AIUnderwriterAuditProgramSettings } from './pages/AIUnderwriterAuditProgramSettings';
 
 export default function App() {
   const [activeView, setActiveView] = useState('lender-pool');
@@ -38,6 +39,7 @@ export default function App() {
   if (activeView === 'ai-underwriter-v2-best-funding-source') content = <AIUnderwriterBestFundingSource />;
   if (activeView === 'ai-underwriter-v2-yield-to-lenders') content = <AIUnderwriterYieldToLenders />;
   if (activeView === 'ai-underwriter-v2-final-action') content = <AIUnderwriterFinalAction />;
+  if (activeView === 'ai-underwriter-v2-audit-program-settings') content = <AIUnderwriterAuditProgramSettings />;
 
   return (
     <Shell activeView={activeView} onNavigate={setActiveView}>
