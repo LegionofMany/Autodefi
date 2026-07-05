@@ -15,6 +15,7 @@ import { AIUnderwriterMarketRiskAudit } from './pages/AIUnderwriterMarketRiskAud
 import { AIUnderwriterApprovalProbability } from './pages/AIUnderwriterApprovalProbability';
 import { AIUnderwriterDefaultRisk } from './pages/AIUnderwriterDefaultRisk';
 import { AIUnderwriterBestFundingSource } from './pages/AIUnderwriterBestFundingSource';
+import { AIUnderwriterYieldToLenders } from './pages/AIUnderwriterYieldToLenders';
 
 export default function App() {
   const [activeView, setActiveView] = useState('lender-pool');
@@ -34,6 +35,7 @@ export default function App() {
   if (activeView === 'ai-underwriter-v2-approval-probability') content = <AIUnderwriterApprovalProbability />;
   if (activeView === 'ai-underwriter-v2-default-risk') content = <AIUnderwriterDefaultRisk />;
   if (activeView === 'ai-underwriter-v2-best-funding-source') content = <AIUnderwriterBestFundingSource />;
+  if (activeView === 'ai-underwriter-v2-yield-to-lenders') content = <AIUnderwriterYieldToLenders />;
 
   return (
     <Shell activeView={activeView} onNavigate={setActiveView}>
