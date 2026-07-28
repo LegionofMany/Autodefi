@@ -8,7 +8,13 @@ import { modulePages, proposals, tierPools, revenueDistribution, type Tone } fro
 
 type ModulePageProps = { id: string };
 
-const genericCopy: Record<string, { title: string; subtitle: string; cards: string[][] }> = {
+type ModulePageContent = {
+  readonly title: string;
+  readonly subtitle: string;
+  readonly cards: readonly (readonly string[])[];
+};
+
+const genericCopy: Record<string, ModulePageContent> = {
   proposals: { title: 'DAO Proposal Center', subtitle: 'Create, review, fund, and execute AutoDeFi governance proposals.', cards: proposals.map((p) => [p.title, p.detail]) },
   vote: { title: 'Vote', subtitle: 'Vote with ADF governance weight across treasury, risk, staking, and marketplace proposals.', cards: [['Active Votes', 'ZONYCS recovery allocation, marketing budget Q2, new collateral types, and reward emissions.'], ['Delegation', 'Delegate voting power to trusted risk, treasury, and compliance operators.'], ['Snapshot', 'Review quorum, execution delay, and proposal history.']] },
   treasury: { title: 'Treasury Management Center', subtitle: 'Assets, allocations, reserves, expenditures, budgets, audit logs, and approved spending.', cards: [['Treasury Assets', 'HBAR, stable-value rails, insurance reserves, ADF allocations, and operating balances.'], ['Scenario Planning', 'Stress testing, cash-flow, reserve policy, and DAO transfer workflows.'], ['Multi-Sig', 'Treasury proposal approvals, security policy, integrations, and audit controls.']] },
@@ -22,7 +28,10 @@ const genericCopy: Record<string, { title: string; subtitle: string; cards: stri
 };
 
 export function ModulePage({ id }: ModulePageProps) {
-  const page = (modulePages as Record<string, { title: string; subtitle: string; cards: string[][] }>)[id] || genericCopy[id] || genericCopy.proposals;
+  const page: ModulePageContent =
+    id in modulePages
+      ? modulePages[id as keyof typeof modulePages]
+      : genericCopy[id] || genericCopy.proposals;
   const metricTone = ['blue', 'green', 'purple', 'orange', 'cyan', 'red'] as Tone[];
 
   return (
