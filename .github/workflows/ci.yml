@@ -1,0 +1,49 @@
+name: AutoDeFi CI
+
+on:
+  push:
+    branches:
+      - main
+      - agent/consolidate-graphics-ui
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run lint:types
+
+      - name: Audit required documentation
+        run: npm run audit:v1-docs
+
+      - name: Audit locked AI graphics
+        run: npm run audit:ai-underwriting-svg-lock
+
+      - name: Audit consolidated graphics
+        run: npm run audit:consolidated-graphics
+
+      - name: Build production frontend
+        run: npm run build
+
+      - name: Check dependencies
+        run: npm audit --audit-level=high

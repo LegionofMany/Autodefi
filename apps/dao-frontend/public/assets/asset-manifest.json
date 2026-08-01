@@ -1,0 +1,8 @@
+{
+  "brand": ["ad-mark.svg", "adf-token.svg", "autodefi-dao-logo.svg", "hedera-status.svg"],
+  "icons": ["dashboard.svg", "proposals.svg", "voting.svg", "treasury.svg", "staking.svg", "lender-pool.svg", "risk-management.svg", "revenue-sharing.svg", "token-utility.svg", "governance.svg", "audit-security.svg", "analytics.svg", "tokenomics.svg", "delegation.svg", "members.svg", "forum.svg", "announcements.svg", "reports-analytics.svg", "resources.svg", "settings.svg", "wallet.svg", "network.svg", "notification.svg", "search.svg"],
+  "backgrounds": ["neon-mesh-grid.svg", "circuit-field.svg", "matrix-code-field.svg"],
+  "illustrations": ["analytics-engine.svg", "governance-orbit.svg", "knowledge-base.svg", "security-shield.svg", "treasury-vault.svg", "zonycs-marketplace.svg"],
+  "reference": ["dao-reference-contact-sheet.svg"],
+  "status": "standalone graphics pushed to GitHub"
+}
