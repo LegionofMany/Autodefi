@@ -1,0 +1,14 @@
+{
+  "client": "Thunder Client",
+  "environmentName": "AutoDeFi V1 Local",
+  "version": "1.0",
+  "variables": [
+    { "name": "gatewayUrl", "value": "http://localhost:4010" },
+    { "name": "webUrl", "value": "http://localhost:3000" },
+    { "name": "adminToken", "value": "" },
+    { "name": "dealerToken", "value": "" },
+    { "name": "borrowerToken", "value": "" },
+    { "name": "lpToken", "value": "" },
+    { "name": "investorToken", "value": "" }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "autodefi-dao-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AutoDeFi DAO Voltaire Protocols frontend command center.",
+  "scripts": {
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "preview": "npx vite preview"
+  }
+}
