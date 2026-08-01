@@ -11,6 +11,13 @@ type ShellProps = {
   children: ReactNode;
 };
 
+const navGroups = [
+  ['core', 'Dashboards'],
+  ['operations', 'Operations'],
+  ['portal', 'Portals'],
+  ['dao', 'DAO'],
+] as const;
+
 export function Shell({ activeView, onNavigate, children }: ShellProps) {
   return (
     <div className="app-shell">
@@ -31,20 +38,17 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
         </div>
 
         <nav className="side-nav" aria-label="AutoDeFi navigation">
-          <p>DAO</p>
-          {navItems.filter((item) => item.group === 'dao').map((item) => (
-            <button key={item.id} type="button" className={activeView === item.id ? 'active' : ''} onClick={() => onNavigate(item.id)}>
-              <Icon name={item.icon} size={22} />
-              <span>{item.label}</span>
-              {item.badge && <em>{item.badge}</em>}
-            </button>
-          ))}
-          <p>Portals</p>
-          {navItems.filter((item) => item.group === 'portal').map((item) => (
-            <button key={item.id} type="button" className={activeView === item.id ? 'active' : ''} onClick={() => onNavigate(item.id)}>
-              <Icon name={item.icon} size={22} />
-              <span>{item.label}</span>
-            </button>
+          {navGroups.map(([group, label]) => (
+            <div className="side-nav-group" key={group}>
+              <p>{label}</p>
+              {navItems.filter((item) => item.group === group).map((item) => (
+                <button key={item.id} type="button" className={activeView === item.id ? 'active' : ''} onClick={() => onNavigate(item.id)}>
+                  <Icon name={item.icon} size={22} />
+                  <span>{item.label}</span>
+                  {item.badge && <em>{item.badge}</em>}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
 
@@ -56,7 +60,7 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
       <main className="main-panel">
         <header className="topbar">
           <div>
-            <h1>{activeView === 'lender-pool' ? 'Lender Pool' : navItems.find((item) => item.id === activeView)?.label || 'AutoDeFi'}</h1>
+            <h1>{navItems.find((item) => item.id === activeView)?.label || 'AutoDeFi'}</h1>
             <p>Provide liquidity, earn yield, and power auto loan origination.</p>
           </div>
           <div className="wallet-strip">

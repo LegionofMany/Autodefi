@@ -1,0 +1,17 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "AutoDeFi V1 API",
+  "version": "1.0",
+  "requests": [
+    {
+      "name": "Gateway Health",
+      "url": "{{gatewayUrl}}/health",
+      "method": "GET"
+    },
+    {
+      "name": "Service Health",
+      "url": "{{gatewayUrl}}/health/services",
+      "method": "GET"
+    }
+  ]
+}

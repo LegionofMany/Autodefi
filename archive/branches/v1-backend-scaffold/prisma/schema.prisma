@@ -1,0 +1,209 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("consumer")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  wallets   UserWallet[]
+  dealers   Dealer[]
+  borrowerDeals Deal[] @relation("BorrowerDeals")
+}
+
+model UserWallet {
+  id            String   @id @default(cuid())
+  userId        String
+  walletAddress String   @unique
+  verified      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Dealer {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner     User      @relation(fields: [ownerId], references: [id])
+  vehicles  Vehicle[]
+  deals     Deal[]
+}
+
+model Vehicle {
+  id        String   @id @default(cuid())
+  vin       String?  @unique
+  make      String
+  model     String
+  trim      String?
+  year      Int
+  price     Float
+  dealerId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dealer    Dealer? @relation(fields: [dealerId], references: [id])
+  deals     Deal[]
+}
+
+model Deal {
+  id             String   @id @default(cuid())
+  dealNumber     String   @unique
+  dealerId       String
+  borrowerUserId String?
+  vehicleId      String?
+  status         String   @default("draft")
+  riskTier       String?
+  approvedAmount Float?
+  approvedRate   Float?
+  approvedTerm   Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  metadata       Json?
+
+  dealer         Dealer   @relation(fields: [dealerId], references: [id])
+  borrower       User?    @relation("BorrowerDeals", fields: [borrowerUserId], references: [id])
+  vehicle        Vehicle? @relation(fields: [vehicleId], references: [id])
+}
+
+model TierPool {
+  id                    String   @id @default(cuid())
+  poolKey               String   @unique
+  riskTier              String   @unique
+  name                  String
+  availableLiquidity    Float    @default(0)
+  activePrincipal       Float    @default(0)
+  totalPrincipalFunded  Float    @default(0)
+  totalInterestEarned   Float    @default(0)
+  totalYieldDistributed Float    @default(0)
+  status                String   @default("active")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model ServicedLoan {
+  id             String   @id @default(cuid())
+  dealId         String
+  dealerId       String
+  borrowerUserId String
+  principal      Float
+  rate           Float
+  termMonths     Int
+  paymentAmount  Float
+  riskTier       String
+  status         String   @default("active")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  metadata       Json?
+}
+
+model DealerFullFundingPayout {
+  id             String   @id @default(cuid())
+  payoutNumber   String   @unique
+  dealId         String
+  loanId         String?
+  dealerId       String
+  riskTier       String
+  approvedAmount Float
+  payoutAmount   Float
+  status         String   @default("queued")
+  txHash         String?
+  createdAt      DateTime @default(now())
+  executedAt     DateTime?
+  metadata       Json?
+}
+
+model StablePaymentIntent {
+  id             String   @id @default(cuid())
+  intentNumber   String   @unique
+  loanId         String
+  borrowerUserId String
+  assetSymbol    String   @default("USDC")
+  amount         Float
+  status         String   @default("created")
+  txHash         String?
+  createdAt      DateTime @default(now())
+  metadata       Json?
+}
+
+model TierPoolYieldEvent {
+  id                 String   @id @default(cuid())
+  eventNumber         String   @unique
+  loanId              String
+  riskTier            String
+  totalPaymentAmount  Float
+  principalReturned   Float
+  grossInterest       Float
+  distributableYield  Float
+  status              String   @default("posted")
+  createdAt           DateTime @default(now())
+}
+
+model ADFCollateralLock {
+  id                String   @id @default(cuid())
+  lockNumber        String   @unique
+  loanId            String?
+  borrowerUserId    String
+  walletAddress     String
+  riskTier          String
+  stableLoanAmount  Float
+  adfAmountLocked   Float
+  collateralPercent Float
+  status            String   @default("locked")
+  hederaTxHash      String?
+  createdAt         DateTime @default(now())
+  metadata          Json?
+}
+
+model AIDealAudit {
+  id              String   @id @default(cuid())
+  auditNumber     String   @unique
+  dealId          String
+  recommendation  String
+  finalTier       String
+  confidenceScore Float    @default(0)
+  status          String   @default("completed")
+  createdAt       DateTime @default(now())
+  metadata        Json?
+}
+
+model ReconciliationRun {
+  id           String   @id @default(cuid())
+  runType      String
+  status       String   @default("running")
+  checkedCount Int      @default(0)
+  matchedCount Int      @default(0)
+  createdAt    DateTime @default(now())
+  completedAt  DateTime?
+}
+
+model V1DashboardSnapshot {
+  id                   String   @id @default(cuid())
+  snapshotKey          String
+  scope                String
+  scopeId              String?
+  totalDealVolume      Float    @default(0)
+  activePrincipal      Float    @default(0)
+  availableLiquidity   Float    @default(0)
+  totalYieldDistributed Float   @default(0)
+  dealerPayoutsExecuted Float   @default(0)
+  borrowerPaymentsPosted Float  @default(0)
+  adfCollateralLocked  Float    @default(0)
+  activeLoans          Int      @default(0)
+  fundedDeals          Int      @default(0)
+  createdAt            DateTime @default(now())
+  metadata             Json?
+}

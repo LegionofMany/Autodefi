@@ -1,4 +1,5 @@
 export const dashboardSvgAssets: Record<string, string> = {
+  'dashboard-hub': '/assets/svg/dashboard-overview.svg',
   dashboard: '/assets/svg/dashboard-overview.svg',
   proposals: '/assets/svg/dao-proposals.svg',
   vote: '/assets/svg/dao-vote.svg',
@@ -16,6 +17,22 @@ export const dashboardSvgAssets: Record<string, string> = {
   'capital-yield': '/assets/svg/capital-yield.svg',
   'insurance-recovery': '/assets/svg/insurance-recovery.svg',
   'admin-command': '/assets/svg/admin-command.svg',
+  'investor-portal': '/assets/svg/capital-yield.svg',
+  'ai-underwriter': '/assets/svg/ai-underwriting-suite/autodefi-ai-underwriter.svg',
+  'ai-underwriter-v2': '/assets/svg/ai-underwriter-v2/module-01-bureau-audit.svg',
+  'dealer-marketplace': '/assets/svg/dealer-portal.svg',
+  marketplace: '/assets/svg/capital-yield.svg',
+  'marketplace-center': '/assets/svg/dashboard-overview.svg',
+  'liquidation-marketplace': '/assets/svg/insurance-recovery.svg',
+  'loan-servicing': '/assets/svg/borrower-portal.svg',
+  'collections-recovery': '/assets/svg/insurance-recovery.svg',
+  'insurance-claims': '/assets/svg/insurance-pool-suite/insurance-pool-dashboard.svg',
+  'risk-security': '/assets/svg/risk-security.svg',
+  'dao-command': '/assets/svg/governance-dashboard.svg',
+  'dao-community': '/assets/svg/governance-dashboard.svg',
+  'treasury-management': '/assets/svg/treasury-center.svg',
+  'staking-rewards': '/assets/svg/adf-staking.svg',
+  'dao-governance': '/assets/svg/governance-dashboard.svg',
 };
 
 export const fallbackDashboardSvg = '/assets/svg/dashboard-overview.svg';

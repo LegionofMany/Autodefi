@@ -1,0 +1,35 @@
+{
+  "name": "autodefi-v1",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "lint:types": "tsc -b --pretty",
+    "audit:v1-docs": "tsx scripts/audit-v1-docs.ts",
+    "db:validate": "tsx scripts/validate-prisma.ts",
+    "seed:defaults": "tsx scripts/seed-defaults.ts",
+    "seed:v1-demo": "tsx scripts/seed-v1-demo.ts",
+    "verify:v1-demo": "tsx scripts/verify-v1-demo.ts",
+    "reset:v1-demo": "tsx scripts/reset-v1-demo.ts",
+    "run:v1-flow": "tsx scripts/run-v1-flow.ts",
+    "rerun:v1-flow": "tsx scripts/reset-and-run-v1-flow.ts",
+    "summary:v1-flow": "tsx scripts/v1-flow-summary.ts"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "typescript": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "@prisma/client": "latest",
+    "prisma": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tsx": "latest"
+  }
+}

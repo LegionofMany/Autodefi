@@ -1,0 +1,1 @@
+{"name":"@autodefi/ui","private":true,"version":"0.1.0","main":"src/index.ts","scripts":{"build":"tsc --noEmit","lint":"tsc --noEmit","typecheck":"tsc --noEmit","test":"echo no tests"},"devDependencies":{"typescript":"^5.6.3"}}

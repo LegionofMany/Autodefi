@@ -15,7 +15,12 @@ export type NavItem = {
   label: string;
   icon: string;
   badge?: string;
-  group?: 'dao' | 'portal';
+  group: 'core' | 'operations' | 'dao' | 'portal';
+};
+
+export type DashboardEntry = NavItem & {
+  description: string;
+  tone: Tone;
 };
 
 export type TierPool = {
@@ -51,23 +56,70 @@ export type LendingMarket = {
 };
 
 export const navItems: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', group: 'dao' },
+  { id: 'dashboard-hub', label: 'Dashboard Hub', icon: 'dashboard', group: 'core' },
+  { id: 'dashboard', label: 'Command Center', icon: 'dashboard', group: 'core' },
+  { id: 'lender-pool', label: 'Lender Pool', icon: 'lender', group: 'core' },
+  { id: 'admin-command', label: 'Admin Command', icon: 'admin', group: 'core' },
+  { id: 'ai-underwriter', label: 'AI Underwriter', icon: 'analytics', group: 'operations' },
+  { id: 'ai-underwriter-v2', label: 'AI Underwriter V2', icon: 'analytics', badge: 'Audit', group: 'operations' },
+  { id: 'dealer-marketplace', label: 'Dealer Marketplace', icon: 'dealer', group: 'operations' },
+  { id: 'marketplace', label: 'Marketplace', icon: 'capital', group: 'operations' },
+  { id: 'marketplace-center', label: 'Marketplace Center', icon: 'capital', group: 'operations' },
+  { id: 'liquidation-marketplace', label: 'Liquidation Marketplace', icon: 'car', group: 'operations' },
+  { id: 'loan-servicing', label: 'Loan Servicing', icon: 'borrower', group: 'operations' },
+  { id: 'collections-recovery', label: 'Collections & Recovery', icon: 'insurance', group: 'operations' },
+  { id: 'insurance-claims', label: 'Insurance Claims', icon: 'insurance', group: 'operations' },
+  { id: 'insurance-recovery', label: 'Insurance & Recovery', icon: 'insurance', group: 'operations' },
+  { id: 'risk-management', label: 'Risk Management', icon: 'risk', group: 'operations' },
+  { id: 'risk-security', label: 'Risk & Security', icon: 'shield', group: 'operations' },
+  { id: 'audit-security', label: 'Audit & Security', icon: 'audit', group: 'operations' },
+  { id: 'borrower-portal', label: 'Borrower Portal', icon: 'borrower', group: 'portal' },
+  { id: 'dealer-portal', label: 'Dealer Portal', icon: 'dealer', group: 'portal' },
+  { id: 'investor-portal', label: 'Investor Portal', icon: 'lender', group: 'portal' },
+  { id: 'capital-yield', label: 'Capital Yield', icon: 'capital', group: 'portal' },
+  { id: 'dao-command', label: 'DAO Command Center', icon: 'governance', group: 'dao' },
+  { id: 'dao-community', label: 'DAO Community', icon: 'governance', group: 'dao' },
   { id: 'proposals', label: 'Proposals', icon: 'proposals', group: 'dao' },
   { id: 'vote', label: 'Vote', icon: 'vote', group: 'dao' },
   { id: 'treasury', label: 'Treasury', icon: 'treasury', group: 'dao' },
+  { id: 'treasury-management', label: 'Treasury Management', icon: 'treasury', group: 'dao' },
   { id: 'staking', label: 'Staking', icon: 'staking', group: 'dao' },
-  { id: 'lender-pool', label: 'Lender Pool', icon: 'lender', group: 'dao' },
-  { id: 'risk-management', label: 'Risk Management', icon: 'risk', group: 'dao' },
+  { id: 'staking-rewards', label: 'Staking Rewards', icon: 'staking', group: 'dao' },
+  { id: 'governance', label: 'Governance', icon: 'governance', badge: 'New', group: 'dao' },
+  { id: 'dao-governance', label: 'DAO Governance', icon: 'governance', group: 'dao' },
   { id: 'revenue-sharing', label: 'Revenue Sharing', icon: 'revenue', group: 'dao' },
   { id: 'token-utility', label: 'Token Utility', icon: 'token', group: 'dao' },
-  { id: 'governance', label: 'Governance', icon: 'governance', badge: 'New', group: 'dao' },
-  { id: 'audit-security', label: 'Audit & Security', icon: 'audit', group: 'dao' },
   { id: 'analytics', label: 'Analytics', icon: 'analytics', group: 'dao' },
-  { id: 'borrower-portal', label: 'Borrower Portal', icon: 'borrower', group: 'portal' },
-  { id: 'dealer-portal', label: 'Dealer Portal', icon: 'dealer', group: 'portal' },
-  { id: 'capital-yield', label: 'Capital Yield', icon: 'capital', group: 'portal' },
-  { id: 'insurance-recovery', label: 'Insurance & Recovery', icon: 'insurance', group: 'portal' },
-  { id: 'admin-command', label: 'Admin Command', icon: 'admin', group: 'portal' }
+];
+
+export const dashboardRegistry: DashboardEntry[] = [
+  { id: 'dashboard', label: 'Command Center', icon: 'dashboard', group: 'core', tone: 'blue', description: 'Unified protocol, portfolio, operational, and executive overview.' },
+  { id: 'lender-pool', label: 'Lender Pool', icon: 'lender', group: 'core', tone: 'green', description: 'Liquidity, risk-tier allocation, yield, utilization, and lender rewards.' },
+  { id: 'admin-command', label: 'Admin Command', icon: 'admin', group: 'core', tone: 'purple', description: 'Identity, access, system controls, integrations, and platform operations.' },
+  { id: 'borrower-portal', label: 'Borrower Portal', icon: 'borrower', group: 'portal', tone: 'blue', description: 'Applications, payments, collateral, protection, rewards, and documents.' },
+  { id: 'dealer-portal', label: 'Dealer Portal', icon: 'dealer', group: 'portal', tone: 'orange', description: 'Inventory, leads, deals, finance, dealer funding, and F&I products.' },
+  { id: 'investor-portal', label: 'Investor Portal', icon: 'lender', group: 'portal', tone: 'green', description: 'Investor portfolio, earnings, allocation, reporting, and opportunities.' },
+  { id: 'capital-yield', label: 'Capital & Yield', icon: 'capital', group: 'portal', tone: 'purple', description: 'Loan marketplace, risk pools, portfolio, earnings, and auto-invest.' },
+  { id: 'ai-underwriter', label: 'AI Underwriter', icon: 'analytics', group: 'operations', tone: 'cyan', description: 'Application scoring, decision support, bureau analysis, and underwriting.' },
+  { id: 'ai-underwriter-v2', label: 'AI Underwriter V2', icon: 'audit', group: 'operations', tone: 'purple', description: 'Shadow-audited AI underwriting modules and decision controls.' },
+  { id: 'dealer-marketplace', label: 'Dealer Marketplace', icon: 'dealer', group: 'operations', tone: 'orange', description: 'Dealer inventory, financing opportunities, listings, and transactions.' },
+  { id: 'marketplace', label: 'Marketplace', icon: 'capital', group: 'operations', tone: 'blue', description: 'AutoDeFi marketplace listings, filters, financing, and allocation.' },
+  { id: 'marketplace-center', label: 'Marketplace Center', icon: 'capital', group: 'operations', tone: 'cyan', description: 'Marketplace operations, offers, settlement, and activity management.' },
+  { id: 'liquidation-marketplace', label: 'Liquidation Marketplace', icon: 'car', group: 'operations', tone: 'red', description: 'Recovered collateral listings, liquidation workflows, and settlement.' },
+  { id: 'loan-servicing', label: 'Loan Servicing', icon: 'borrower', group: 'operations', tone: 'green', description: 'Active loan schedules, payments, servicing queues, and account health.' },
+  { id: 'collections-recovery', label: 'Collections & Recovery', icon: 'insurance', group: 'operations', tone: 'red', description: 'Delinquency, workouts, repossession, collections, and asset recovery.' },
+  { id: 'insurance-claims', label: 'Insurance Claims', icon: 'insurance', group: 'operations', tone: 'orange', description: 'Claim intake, assessment, coverage, reserves, and settlement status.' },
+  { id: 'insurance-recovery', label: 'Insurance & Recovery', icon: 'insurance', group: 'operations', tone: 'green', description: 'Insurance pool, claims, recoveries, reserves, and protection layers.' },
+  { id: 'risk-management', label: 'Risk Management', icon: 'risk', group: 'operations', tone: 'orange', description: 'Exposure, fraud, compliance, policy, alerts, and portfolio risk.' },
+  { id: 'risk-security', label: 'Risk & Security', icon: 'shield', group: 'operations', tone: 'red', description: 'Security posture, controls, incidents, audit evidence, and monitoring.' },
+  { id: 'audit-security', label: 'Audit & Security', icon: 'audit', group: 'operations', tone: 'cyan', description: 'Contract audits, compliance, access, transaction, and incident monitoring.' },
+  { id: 'dao-command', label: 'DAO Command Center', icon: 'governance', group: 'dao', tone: 'purple', description: 'DAO operations, governance status, execution, and community controls.' },
+  { id: 'dao-community', label: 'DAO Community', icon: 'governance', group: 'dao', tone: 'cyan', description: 'Community participation, members, resources, announcements, and forum.' },
+  { id: 'proposals', label: 'DAO Proposals', icon: 'proposals', group: 'dao', tone: 'blue', description: 'Proposal creation, review, funding, voting, and execution.' },
+  { id: 'vote', label: 'DAO Vote', icon: 'vote', group: 'dao', tone: 'purple', description: 'Governance voting, delegation, quorum, snapshots, and history.' },
+  { id: 'treasury-management', label: 'Treasury Management', icon: 'treasury', group: 'dao', tone: 'green', description: 'Assets, reserves, budgets, approvals, scenarios, and multi-sig controls.' },
+  { id: 'staking-rewards', label: 'Staking Rewards', icon: 'staking', group: 'dao', tone: 'purple', description: 'ADF positions, reward accrual, boosts, distribution, and staking activity.' },
+  { id: 'dao-governance', label: 'DAO Governance', icon: 'governance', group: 'dao', tone: 'orange', description: 'Delegates, proposals, parameters, timelocks, and execution controls.' },
 ];
 
 export const topMetrics: Metric[] = [

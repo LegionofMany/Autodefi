@@ -1,0 +1,25 @@
+:root {
+  --ad-bg: #020617;
+  --ad-blue: #00b7ff;
+  --ad-green: #00ff9d;
+  --ad-purple: #8b5cf6;
+}
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(0,183,255,.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(139,92,246,.2), transparent 30%),
+    #020617;
+  color: white;
+  font-family: Inter, system-ui, sans-serif;
+}
+.ad-text-gradient {
+  background: linear-gradient(90deg,var(--ad-green),var(--ad-blue),var(--ad-purple));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.ad-panel {
+  border: 1px solid rgba(96,165,250,.22);
+  background: rgba(8,13,35,.86);
+  backdrop-filter: blur(18px);
+}
