@@ -20,6 +20,7 @@ button:focus-visible,.link-button:focus-visible,input:focus-visible{outline:2px 
 .dealer-user-more{border:0;background:transparent;color:#cbd8ea;padding:6px;cursor:pointer}
 .dealer-filters button.active,.dealer-filter-button.active{border-color:#1677ff!important;background:rgba(22,119,255,.18)!important;color:#8cc8ff!important}
 .dealer-table-grid{box-shadow:inset 0 0 0 1px rgba(22,119,255,.18)}
+.dealer-content-stack,.dealer-right-rail{min-width:0}
 .dealer-lock.dealer-sidebar-collapsed{grid-template-columns:86px minmax(0,1fr)}
 .dealer-sidebar-collapsed .dealer-sidebar{padding:14px 10px;overflow:hidden}
 .dealer-sidebar-collapsed .dealer-brand{justify-content:center}
