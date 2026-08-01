@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../components/Button';
+import { useActionCenter } from '../components/ActionCenter';
 import { Card, CardTitle } from '../components/Card';
 import { Icon } from '../components/Icon';
 import { StatusPill } from '../components/StatusPill';
@@ -18,7 +19,14 @@ export function LenderPool() {
 }
 
 function PageHead({ number, title, subtitle }: { number: string; title: string; subtitle: string }) {
-  return <div className="page-head"><div><h2>{number}. {title} <span>ⓘ</span></h2><p>{subtitle}</p></div><div className="head-actions"><a>How this works ⓘ</a><Button>Export Report ⇩</Button></div></div>;
+  const { downloadCsv, openAction } = useActionCenter();
+  return <div className="page-head"><div><h2>{number}. {title} <span>ⓘ</span></h2><p>{subtitle}</p></div><div className="head-actions"><button className="link-button" type="button" onClick={() => openAction(`How ${title} works`, subtitle, ['Controls update the visible lender-pool view immediately.', 'Exports download the currently displayed report.', 'Funding and withdrawal transactions require wallet confirmation.'])}>How this works ⓘ</button><Button onClick={() => downloadCsv(`lender-pool-${number}.csv`, [['Report', title], ['Description', subtitle], ['Generated', new Date().toISOString()]])}>Export Report ⇩</Button></div></div>;
+}
+
+function TabRow({ items }: { items: readonly string[] }) {
+  const [active, setActive] = useState(items[0]);
+  const { notify } = useActionCenter();
+  return <div className="tab-row">{items.map((item) => <Button key={item} variant={active === item ? 'primary' : 'ghost'} onClick={() => { setActive(item); notify(`${item} view selected`); }}>{item}</Button>)}</div>;
 }
 
 function MiniKpi({ icon, label, value, note, tone }: { icon: string; label: string; value: string; note: string; tone: Tone }) {
@@ -26,7 +34,8 @@ function MiniKpi({ icon, label, value, note, tone }: { icon: string; label: stri
 }
 
 function TierCard({ tier }: { tier: typeof tierPools[number] }) {
-  return <article className={`tier-card tone-${tier.tone}`}><div className="tier-card-head"><Icon name={tier.id === 'dealer' ? 'dealer' : tier.id === 'insurance' ? 'insurance' : 'shield'} size={34} /><div><h3>{tier.title}</h3><span>{tier.subtitle}</span></div></div><img src={tier.vehicle} alt="" className="tier-vehicle" /><p>{tier.description}</p><strong>{tier.value}</strong><small>{tier.share}% of pool</small><dl><div><dt>Avg. APY</dt><dd>{tier.apy}</dd></div><div><dt>Utilization</dt><dd>{tier.utilization}%</dd></div></dl><div className="meter"><i style={{ width: `${tier.utilization}%` }} /></div><dl><div><dt>Active</dt><dd>{tier.activeLoans}</dd></div><div><dt>Delinquency</dt><dd>{tier.delinquency}</dd></div></dl><Button variant="ghost">View Loans →</Button></article>;
+  const { openAction } = useActionCenter();
+  return <article className={`tier-card tone-${tier.tone}`}><div className="tier-card-head"><Icon name={tier.id === 'dealer' ? 'dealer' : tier.id === 'insurance' ? 'insurance' : 'shield'} size={34} /><div><h3>{tier.title}</h3><span>{tier.subtitle}</span></div></div><img src={tier.vehicle} alt="" className="tier-vehicle" /><p>{tier.description}</p><strong>{tier.value}</strong><small>{tier.share}% of pool</small><dl><div><dt>Avg. APY</dt><dd>{tier.apy}</dd></div><div><dt>Utilization</dt><dd>{tier.utilization}%</dd></div></dl><div className="meter"><i style={{ width: `${tier.utilization}%` }} /></div><dl><div><dt>Active</dt><dd>{tier.activeLoans}</dd></div><div><dt>Delinquency</dt><dd>{tier.delinquency}</dd></div></dl><Button variant="ghost" onClick={() => openAction(`${tier.title} loans`, tier.description, [`Pool value: ${tier.value}`, `Average APY: ${tier.apy}`, `Utilization: ${tier.utilization}%`, `Active loans: ${tier.activeLoans}`, `Delinquency: ${tier.delinquency}`])}>View Loans →</Button></article>;
 }
 
 function ChartStat({ title, value, delta, tone = 'green' }: { title: string; value: string; delta: string; tone?: Tone }) {
