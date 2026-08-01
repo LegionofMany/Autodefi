@@ -1,4 +1,5 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 
 const requiredFiles = [
   'public/assets/dealer/logos/autodefi-logo-primary.svg',
@@ -30,4 +31,25 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-console.log(`Consolidated graphics audit passed (${requiredFiles.length} required files).`);
+function findSvgFiles(directory: string): string[] {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) return findSvgFiles(path);
+    return entry.isFile() && entry.name.endsWith('.svg') ? [path] : [];
+  });
+}
+
+const publicSvgFiles = findSvgFiles('public');
+const invalidSvgFiles = publicSvgFiles.filter((file) => {
+  const source = readFileSync(file, 'utf8');
+  const hasBareAmpersand = /&(?!#\d+;|#x[0-9a-fA-F]+;|[A-Za-z][A-Za-z0-9]+;)/.test(source);
+  return hasBareAmpersand || !source.includes('<svg') || !source.includes('</svg>');
+});
+
+if (invalidSvgFiles.length > 0) {
+  console.error('Invalid public SVG XML detected:');
+  for (const file of invalidSvgFiles) console.error(`- ${file}`);
+  process.exit(1);
+}
+
+console.log(`Consolidated graphics audit passed (${requiredFiles.length} required files, ${publicSvgFiles.length} valid public SVGs).`);
