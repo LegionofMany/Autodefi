@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '../components/Button';
 import { useActionCenter } from '../components/ActionCenter';
 import { Card, CardTitle } from '../components/Card';
@@ -45,12 +46,54 @@ const genericCopy: Record<string, ModulePageContent> = {
 };
 
 export function ModulePage({ id }: ModulePageProps) {
-  const { downloadCsv, openAction } = useActionCenter();
+  const { downloadCsv, openWorkflow, notify } = useActionCenter();
   const page: ModulePageContent =
     id in modulePages
       ? modulePages[id as keyof typeof modulePages]
       : genericCopy[id] || genericCopy.proposals;
   const metricTone = ['blue', 'green', 'purple', 'orange', 'cyan', 'red'] as Tone[];
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [rowStates, setRowStates] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    setQuery('');
+    setStatusFilter('All');
+    setRowStates({});
+  }, [id]);
+
+  const statusFor = useCallback((title: string, index: number) => rowStates[title] || (index % 3 === 0 ? 'Healthy' : index % 3 === 1 ? 'In Review' : 'Queued'), [rowStates]);
+  const visibleCards = useMemo(() => page.cards.filter((card, index) => {
+    const matchesQuery = `${card[0]} ${card[1]}`.toLowerCase().includes(query.trim().toLowerCase());
+    const matchesStatus = statusFilter === 'All' || statusFor(card[0], index) === statusFilter;
+    return matchesQuery && matchesStatus;
+  }), [page.cards, query, statusFilter, statusFor]);
+
+  const openSettings = () => openWorkflow({
+    title: `${page.title} settings`,
+    message: 'These preferences update the current frontend workspace without changing the approved dashboard design.',
+    fields: [
+      { id: 'density', label: 'Table density', type: 'select', options: ['Comfortable', 'Compact'], defaultValue: 'Comfortable', required: true },
+      { id: 'notifications', label: 'Enable dashboard notifications', type: 'checkbox', defaultValue: true },
+      { id: 'savedView', label: 'Saved view name', placeholder: `${page.title} default` },
+    ],
+    submitLabel: 'Save settings',
+    successMessage: `${page.title} settings saved`,
+    onSubmit: () => undefined,
+  });
+
+  const openQueueItem = (card: readonly string[], index: number) => openWorkflow({
+    title: card[0],
+    message: card[1],
+    details: [`Owner: AutoDeFi DAO`, `Priority: ${index + 1}`, `Current status: ${statusFor(card[0], index)}`],
+    fields: [
+      { id: 'status', label: 'Frontend status', type: 'select', options: ['Healthy', 'In Review', 'Queued'], defaultValue: statusFor(card[0], index), required: true },
+      { id: 'note', label: 'Review note', type: 'textarea', placeholder: 'Add an operational note for this record.' },
+    ],
+    submitLabel: 'Update item',
+    successMessage: `${card[0]} updated`,
+    onSubmit: (values) => setRowStates((current) => ({ ...current, [card[0]]: String(values.status) })),
+  });
 
   return (
     <div className="module-page">
@@ -62,7 +105,7 @@ export function ModulePage({ id }: ModulePageProps) {
           </div>
           <div className="head-actions">
             <Button onClick={() => downloadCsv(`${id}-report.csv`, [['Metric', 'Detail'], ...page.cards.map((card) => [card[0], card[1]])])}>Export</Button>
-            <Button variant="ghost" onClick={() => openAction(`${page.title} settings`, 'Frontend settings are available for this dashboard.', ['Notification preferences', 'Table density and saved views', 'Role-based controls pending identity service connection'])}>Open Settings</Button>
+            <Button variant="ghost" onClick={openSettings}>Open Settings</Button>
           </div>
         </div>
 
@@ -96,19 +139,27 @@ export function ModulePage({ id }: ModulePageProps) {
         </div>
 
         <Card>
-          <CardTitle title="Work Queue" action={<Button variant="ghost" onClick={() => openAction(`${page.title} work queue`, `${page.cards.length} work-queue groups are available.`, page.cards.map((card) => `${card[0]} — ${card[1]}`))}>View All →</Button>} />
+          <CardTitle title="Work Queue" action={<Button variant="ghost" onClick={() => { setQuery(''); setStatusFilter('All'); notify(`Showing all ${page.cards.length} work-queue groups`); }}>View All →</Button>} />
+          <div className="work-queue-controls">
+            <label><span>Search queue</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`Search ${page.title.toLowerCase()}...`} /></label>
+            <label><span>Status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option>All</option><option>Healthy</option><option>In Review</option><option>Queued</option></select></label>
+          </div>
           <table className="data-table">
             <thead><tr><th>Item</th><th>Status</th><th>Owner</th><th>Priority</th><th>Action</th></tr></thead>
             <tbody>
-              {page.cards.map((card, index) => (
+              {visibleCards.map((card) => {
+                const index = page.cards.indexOf(card);
+                const status = statusFor(card[0], index);
+                return (
                 <tr key={card[0]}>
                   <td><b>{card[0]}</b><small>{card[1]}</small></td>
-                  <td><StatusPill tone={index % 3 === 0 ? 'green' : index % 3 === 1 ? 'blue' : 'orange'}>{index % 3 === 0 ? 'Healthy' : index % 3 === 1 ? 'In Review' : 'Queued'}</StatusPill></td>
+                  <td><StatusPill tone={status === 'Healthy' ? 'green' : status === 'In Review' ? 'blue' : 'orange'}>{status}</StatusPill></td>
                   <td>AutoDeFi DAO</td>
                   <td>{index + 1}</td>
-                  <td><Button variant="ghost" onClick={() => openAction(card[0], card[1], [`Owner: AutoDeFi DAO`, `Priority: ${index + 1}`, `Status: ${index % 3 === 0 ? 'Healthy' : index % 3 === 1 ? 'In Review' : 'Queued'}`])}>Open</Button></td>
+                  <td><Button variant="ghost" onClick={() => openQueueItem(card, index)}>Open</Button></td>
                 </tr>
-              ))}
+              )})}
+              {!visibleCards.length ? <tr><td colSpan={5}>No queue items match the current search and status filter.</td></tr> : null}
             </tbody>
           </table>
         </Card>

@@ -186,33 +186,79 @@ function TableCell({ pageId, value, rowIndex, cellIndex }: { pageId: string; val
   return looksLikeStatus(value) ? <StatusBadge value={value} /> : <span>{value}</span>;
 }
 
-function DataTable({ page }: { page: DealerPage }) {
+function DataTable({ page, globalQuery, addedRows }: { page: DealerPage; globalQuery: string; addedRows: string[][] }) {
   const [activeTab, setActiveTab] = useState(page.table.tabs[0]);
   const [filtersVisible, setFiltersVisible] = useState(true);
   const [view, setView] = useState<'grid' | 'list'>('list');
   const [query, setQuery] = useState('');
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const { notify, openAction } = useActionCenter();
+  const [rowEdits, setRowEdits] = useState<Record<string, string[]>>({});
+  const { notify, openAction, openWorkflow } = useActionCenter();
+  const allRows = useMemo(() => [...addedRows, ...page.table.rows].map((row) => rowEdits[row[0]] || row), [addedRows, page.table.rows, rowEdits]);
   const visibleRows = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return page.table.rows;
-    return page.table.rows.filter((row) => row.some((cell) => cell.toLowerCase().includes(normalized)));
-  }, [page.table.rows, query]);
+    const normalized = `${globalQuery} ${query}`.trim().toLowerCase();
+    const tabTerm = activeTab.replace(/\s*\(.+\)$/, '').trim().toLowerCase();
+    const tabCanFilter = !['all', 'recent deals', 'overview', 'active campaigns', 'my applications', 'completed', 'history'].some((term) => tabTerm.startsWith(term));
+    return allRows.filter((row) => {
+      const rowText = row.join(' ').toLowerCase();
+      const matchesQuery = !normalized || normalized.split(/\s+/).every((term) => rowText.includes(term));
+      const matchesTab = !tabCanFilter || rowText.includes(tabTerm);
+      const matchesFilters = Object.values(activeFilters).every((value) => !value || value === 'All records' || rowText.includes(value.toLowerCase()));
+      return matchesQuery && matchesTab && matchesFilters;
+    });
+  }, [activeFilters, activeTab, allRows, globalQuery, query]);
+  const pageSize = 4;
+  const pageCount = Math.max(1, Math.ceil(visibleRows.length / pageSize));
+  const safePage = Math.min(currentPage, pageCount);
+  const pageRows = visibleRows.slice((safePage - 1) * pageSize, safePage * pageSize);
 
-  const toggleFilter = (filter: string) => {
-    setActiveFilters((current) => current.includes(filter) ? current.filter((item) => item !== filter) : [...current, filter]);
-    notify(`${filter} filter ${activeFilters.includes(filter) ? 'removed' : 'selected'}`);
+  const chooseFilter = (filter: string) => {
+    const normalizedFilter = filter.toLowerCase();
+    const matchingColumn = page.table.columns.findIndex((column) => normalizedFilter.includes(column.toLowerCase()) || column.toLowerCase().includes(normalizedFilter.replace(/^all\s+/, '').replace(/s$/, '')));
+    const columnValues = matchingColumn >= 0 ? allRows.map((row) => row[matchingColumn]).filter(Boolean) : allRows.flat().filter((value) => value.length < 32);
+    const options = ['All records', ...Array.from(new Set(columnValues)).slice(0, 12)];
+    openWorkflow({
+      title: filter,
+      message: `Select the ${filter.toLowerCase()} filter for this ${page.label.toLowerCase()} table.`,
+      fields: [{ id: 'value', label: filter, type: 'select', options, defaultValue: activeFilters[filter] || 'All records', required: true }],
+      submitLabel: 'Apply filter',
+      successMessage: `${filter} filter applied`,
+      onSubmit: (values) => {
+        const value = String(values.value);
+        setActiveFilters((current) => value === 'All records' ? Object.fromEntries(Object.entries(current).filter(([key]) => key !== filter)) : { ...current, [filter]: value });
+        setCurrentPage(1);
+      },
+    });
   };
 
-  const openRowAction = (action: string, row: readonly string[]) => {
-    openAction(`${action}: ${row[0]}`, `${action} controls are active for this ${page.label.toLowerCase()} record.`, row.map((value, index) => `${page.table.columns[index] || `Field ${index + 1}`}: ${value}`));
-  };
+  const viewRow = (row: readonly string[]) => openAction(`View: ${row[0]}`, `${page.label} record details`, row.map((value, index) => `${page.table.columns[index] || `Field ${index + 1}`}: ${value}`));
+
+  const editRow = (row: readonly string[]) => openWorkflow({
+    title: `Edit ${row[0]}`,
+    message: `Update the visible ${page.label.toLowerCase()} record in this frontend workspace.`,
+    fields: page.table.columns.slice(0, Math.min(4, row.length)).map((column, index) => ({ id: `field-${index}`, label: column, defaultValue: row[index], required: index === 0 })),
+    submitLabel: 'Save record',
+    successMessage: `${row[0]} updated`,
+    onSubmit: (values) => setRowEdits((current) => ({ ...current, [row[0]]: row.map((value, index) => index < 4 ? String(values[`field-${index}`] ?? value) : value) })),
+  });
+
+  const openMoreActions = (row: readonly string[]) => openWorkflow({
+    title: `Record action: ${row[0]}`,
+    message: 'Record an operational follow-up without changing the approved dealer layout.',
+    fields: [
+      { id: 'action', label: 'Action', type: 'select', options: ['Assign for review', 'Request documents', 'Flag for follow-up', 'Archive locally'], required: true },
+      { id: 'note', label: 'Internal note', type: 'textarea', placeholder: 'Add a note for the dealer team.' },
+    ],
+    submitLabel: 'Save action',
+    successMessage: `Action recorded for ${row[0]}`,
+    onSubmit: () => undefined,
+  });
 
   return (
     <section className="dealer-card dealer-table-card">
       <div className="dealer-tabs">
-        {page.table.tabs.map((tab) => <button type="button" key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => { setActiveTab(tab); notify(`${tab} tab selected`); }}>{tab}</button>)}
+        {page.table.tabs.map((tab) => <button type="button" key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => { setActiveTab(tab); setCurrentPage(1); notify(`${tab} tab selected`); }}>{tab}</button>)}
         <span className="dealer-tab-spacer" />
         <button type="button" className="dealer-filter-button" aria-expanded={filtersVisible} onClick={() => setFiltersVisible((visible) => !visible)}><DealerIcon name="filter" size={16} /> Filters</button>
         <button type="button" className={`dealer-filter-button${view === 'grid' ? ' active' : ''}`} aria-label="Grid view" aria-pressed={view === 'grid'} onClick={() => { setView('grid'); notify('Grid view selected'); }}><DealerIcon name="grid" size={16} /></button>
@@ -220,8 +266,8 @@ function DataTable({ page }: { page: DealerPage }) {
       </div>
       {filtersVisible ? <div className="dealer-filters">
         <label><DealerIcon name="search" size={16} /><input value={query} onChange={(event) => { setQuery(event.target.value); setCurrentPage(1); }} placeholder={`Search ${page.label.toLowerCase()}...`} /></label>
-        {page.table.filters.map((filter) => <button type="button" key={filter} className={activeFilters.includes(filter) ? 'active' : ''} aria-pressed={activeFilters.includes(filter)} onClick={() => toggleFilter(filter)}>{filter}</button>)}
-        <button type="button" onClick={() => { setQuery(''); setActiveFilters([]); setCurrentPage(1); notify('Table filters cleared'); }}>Clear Filters</button>
+        {page.table.filters.map((filter) => <button type="button" key={filter} className={activeFilters[filter] ? 'active' : ''} aria-pressed={Boolean(activeFilters[filter])} onClick={() => chooseFilter(filter)}>{activeFilters[filter] || filter}</button>)}
+        <button type="button" onClick={() => { setQuery(''); setActiveFilters({}); setCurrentPage(1); notify('Table filters cleared'); }}>Clear Filters</button>
       </div> : null}
       <div className={`dealer-table-wrap dealer-table-${view}`}>
         <table>
@@ -229,13 +275,13 @@ function DataTable({ page }: { page: DealerPage }) {
             <tr>{page.table.columns.map((column) => <th key={column}>{column}</th>)}<th>Actions</th></tr>
           </thead>
           <tbody>
-            {visibleRows.map((row, rowIndex) => (
-              <tr key={`${page.id}-${rowIndex}`}>
+            {pageRows.map((row, rowIndex) => (
+              <tr key={`${page.id}-${row[0]}-${rowIndex}`}>
                 {row.map((cell, index) => <td key={`${cell}-${index}`}><TableCell pageId={page.id} value={cell} rowIndex={rowIndex} cellIndex={index} /></td>)}
                 <td className="dealer-row-actions">
-                  <button type="button" aria-label={`View ${row[0]}`} onClick={() => openRowAction('View', row)}><DealerIcon name="eye" size={16} /></button>
-                  <button type="button" aria-label={`Edit ${row[0]}`} onClick={() => openRowAction('Edit', row)}><DealerIcon name="edit" size={16} /></button>
-                  <button type="button" aria-label={`More actions for ${row[0]}`} onClick={() => openRowAction('More actions', row)}><DealerIcon name="more" size={16} /></button>
+                  <button type="button" aria-label={`View ${row[0]}`} onClick={() => viewRow(row)}><DealerIcon name="eye" size={16} /></button>
+                  <button type="button" aria-label={`Edit ${row[0]}`} onClick={() => editRow(row)}><DealerIcon name="edit" size={16} /></button>
+                  <button type="button" aria-label={`More actions for ${row[0]}`} onClick={() => openMoreActions(row)}><DealerIcon name="more" size={16} /></button>
                 </td>
               </tr>
             ))}
@@ -243,7 +289,7 @@ function DataTable({ page }: { page: DealerPage }) {
           </tbody>
         </table>
       </div>
-      <footer className="dealer-pagination"><span>{visibleRows.length === page.table.rows.length ? page.table.pagination : `${visibleRows.length} matching records`} · Page {currentPage}</span><div>{[1, 2, 3].map((pageNumber) => <button type="button" key={pageNumber} className={currentPage === pageNumber ? 'active' : ''} onClick={() => { setCurrentPage(pageNumber); notify(`Page ${pageNumber} selected`); }}>{pageNumber}</button>)}<button type="button" aria-label="Next page" onClick={() => { const next = currentPage === 3 ? 1 : currentPage + 1; setCurrentPage(next); notify(`Page ${next} selected`); }}>›</button></div></footer>
+      <footer className="dealer-pagination"><span>{visibleRows.length === allRows.length ? page.table.pagination : `${visibleRows.length} matching records`} · Page {safePage} of {pageCount}</span><div>{Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => <button type="button" key={pageNumber} className={safePage === pageNumber ? 'active' : ''} onClick={() => { setCurrentPage(pageNumber); notify(`Page ${pageNumber} selected`); }}>{pageNumber}</button>)}<button type="button" aria-label="Next page" disabled={safePage === pageCount} onClick={() => { const next = Math.min(pageCount, safePage + 1); setCurrentPage(next); notify(`Page ${next} selected`); }}>›</button></div></footer>
     </section>
   );
 }
@@ -270,7 +316,29 @@ function Funnel({ items }: { items: string[] }) {
 
 function RailCard({ card }: { card: DealerRailCard }) {
   const isShareCard = card.title.toLowerCase().includes('share');
-  const { notify, openAction } = useActionCenter();
+  const { copyText, openAction, openWorkflow } = useActionCenter();
+  const runCardAction = (item: string) => {
+    if (isShareCard && item === 'Copy Link') {
+      void copyText('Referral link', dealerProfile.referralUrl);
+      return;
+    }
+    openWorkflow({
+      title: item,
+      message: isShareCard ? `Prepare the ${item} referral share from ${dealerProfile.name}.` : `Complete the ${item} frontend workflow from ${card.title}.`,
+      details: isShareCard ? [`Referral code: ${dealerProfile.code}`, `Referral link: ${dealerProfile.referralUrl}`] : [`Dealer: ${dealerProfile.name}`, `Source: ${card.title}`],
+      fields: isShareCard ? [
+        { id: 'recipient', label: 'Recipient or channel', defaultValue: item, required: true },
+        { id: 'message', label: 'Message', type: 'textarea', defaultValue: `Explore AutoDeFi with ${dealerProfile.name}: ${dealerProfile.referralUrl}`, required: true },
+      ] : [
+        { id: 'reference', label: 'Reference', placeholder: 'VIN, customer, deal or campaign' },
+        { id: 'notes', label: 'Action notes', type: 'textarea', placeholder: `Add details for ${item.toLowerCase()}.` },
+        { id: 'confirmed', label: 'I reviewed this dealer action.', type: 'checkbox', required: true },
+      ],
+      submitLabel: isShareCard ? 'Prepare share' : `Save ${item}`,
+      successMessage: `${item} saved to the Dealer Portal activity log`,
+      onSubmit: () => undefined,
+    });
+  };
   return (
     <section className="dealer-card dealer-rail-card">
       <div className="dealer-card-head"><h3>{card.title}</h3><button type="button" onClick={() => openAction(card.title, card.subtitle || `${card.title} details`, card.items)}>View All</button></div>
@@ -280,49 +348,73 @@ function RailCard({ card }: { card: DealerRailCard }) {
       {card.kind === 'score' && <div className="dealer-score"><strong>{card.value}</strong>{card.subtitle && <span>{card.subtitle}</span>}</div>}
       {card.kind === 'copy' && <div className="dealer-copy-card"><code>{card.value}</code>{card.items.map((item) => <code key={item}>{item}</code>)}</div>}
       {card.kind === 'actions'
-        ? <div className="dealer-action-grid">{card.items.map((item) => <button type="button" key={item} onClick={() => isShareCard ? notify(`${item} sharing selected`) : openAction(item, `${item} is ready in the Dealer Portal.`, [`Source: ${card.title}`, 'Submission requires final dealer confirmation.'])}>{isShareCard ? <SocialIcon label={item} /> : <DealerIcon name="plus" size={18} />}{item}</button>)}</div>
+        ? <div className="dealer-action-grid">{card.items.map((item) => <button type="button" key={item} onClick={() => runCardAction(item)}>{isShareCard ? <SocialIcon label={item} /> : <DealerIcon name="plus" size={18} />}{item}</button>)}</div>
         : <ul className="dealer-list">{card.items.map((item) => <li key={item}><span>{item}</span></li>)}</ul>}
     </section>
   );
 }
 
-function DealerTopbar({ page }: { page: DealerPage }) {
-  const [search, setSearch] = useState('');
-  const { openAction } = useActionCenter();
+function DealerTopbar({ page, search, setSearch }: { page: DealerPage; search: string; setSearch: (value: string) => void }) {
+  const { notify, openAction } = useActionCenter();
   return (
     <header className="dealer-topbar">
       <div>
         <h1>{page.label}</h1>
         <p>Dealer Portal <span>/</span> {page.label}</p>
       </div>
-      <label className="dealer-search"><DealerIcon name="search" size={18} /><input value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && search.trim()) openAction(`Search ${page.label}`, `Searching for “${search.trim()}” across ${page.label.toLowerCase()}.`, ['The search field is connected.', 'Live cross-record results require the Dealer API index.']); }} placeholder={page.searchPlaceholder} /><kbd>/</kbd></label>
+      <label className="dealer-search"><DealerIcon name="search" size={18} /><input value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && search.trim()) notify(`Showing ${page.label.toLowerCase()} results for “${search.trim()}”`); }} placeholder={page.searchPlaceholder} /><kbd>/</kbd></label>
       <div className="dealer-top-actions">
         <button type="button" className="dealer-icon-button" aria-label="Open dealer notifications" onClick={() => openAction('Dealer notifications', 'Eight Dealer Portal notifications are ready.', ['3 funding updates', '2 inventory alerts', '2 customer follow-ups', '1 compliance notice'])}><DealerIcon name="bell" /><sup>8</sup></button>
         <button type="button" className="dealer-icon-button" aria-label="Open dealer messages" onClick={() => openAction('Dealer messages', 'Three unread conversations are available.', ['Customer financing inquiry', 'Lender condition update', 'AutoDeFi support response'])}><DealerIcon name="message" /><sup>3</sup></button>
-        <button type="button" className="dealer-account" onClick={() => openAction(dealerProfile.name, 'Dealer account controls are connected.', [`Role: ${dealerProfile.role}`, `User: ${dealerProfile.user}`, `Access: ${dealerProfile.userRole}`])}><img src="/assets/dealer/logos/elite-motors-badge.svg" alt="Elite Motors" /><span><b>{dealerProfile.name}</b><small>{dealerProfile.role}</small></span><DealerIcon name="chevron" size={16} /></button>
+        <button type="button" className="dealer-account" onClick={() => openAction(dealerProfile.name, 'Verified Dealer account summary', [`Role: ${dealerProfile.role}`, `User: ${dealerProfile.user}`, `Access: ${dealerProfile.userRole}`, `Location: ${dealerProfile.location}`])}><img src="/assets/dealer/logos/elite-motors-badge.svg" alt="Elite Motors" /><span><b>{dealerProfile.name}</b><small>{dealerProfile.role}</small></span><DealerIcon name="chevron" size={16} /></button>
       </div>
     </header>
   );
 }
 
 function DealerSidebar({ active, setActive, collapsed, onToggle, onExit }: { active: string; setActive: (id: string) => void; collapsed: boolean; onToggle: () => void; onExit: () => void }) {
-  const { openAction } = useActionCenter();
+  const { openAction, openWorkflow } = useActionCenter();
+  const openDealerSettings = () => openWorkflow({
+    title: 'Dealer Portal settings',
+    message: 'Manage dealership display, notifications and frontend integration preferences.',
+    fields: [
+      { id: 'dealerName', label: 'Dealership name', defaultValue: dealerProfile.name, required: true },
+      { id: 'location', label: 'Location', defaultValue: dealerProfile.location, required: true },
+      { id: 'notifications', label: 'Enable funding and inventory alerts', type: 'checkbox', defaultValue: true },
+      { id: 'marketplace', label: 'Show approved ZONYCS marketplace actions', type: 'checkbox', defaultValue: true },
+    ],
+    submitLabel: 'Save dealer settings',
+    successMessage: 'Dealer Portal settings saved',
+    onSubmit: () => undefined,
+  });
+  const openSupport = () => openWorkflow({
+    title: 'Dealer support request',
+    message: 'Create a support request for funding, technical or compliance assistance.',
+    fields: [
+      { id: 'category', label: 'Support category', type: 'select', options: ['Funding support', 'Technical support', 'Compliance question'], required: true },
+      { id: 'reference', label: 'Deal, VIN or account reference', placeholder: 'Optional reference' },
+      { id: 'message', label: 'How can AutoDeFi help?', type: 'textarea', required: true },
+    ],
+    submitLabel: 'Create support request',
+    successMessage: 'Dealer support request created',
+    onSubmit: () => undefined,
+  });
   return (
     <aside className="dealer-sidebar">
       <div className="dealer-brand"><button type="button" className="dealer-home-button" onClick={onExit} aria-label="Return to Dashboard Hub"><img src="/assets/dealer/logos/autodefi-logo-primary.svg" alt="AutoDeFi" /></button><button type="button" onClick={onToggle} aria-label={collapsed ? 'Expand dealer menu' : 'Collapse dealer menu'} aria-expanded={!collapsed}><DealerIcon name="menu" /></button></div>
       <div className="dealer-profile"><img src="/assets/dealer/logos/elite-motors-badge.svg" alt="Elite Motors" /><span><b>{dealerProfile.name}</b><small>{dealerProfile.role}</small></span><DealerIcon name="chevron" size={15} /></div>
       <nav>
         {dealerNav.map((item) => (
-          <button type="button" key={item.id} className={active === item.id ? 'active' : ''} onClick={() => item.id === 'settings' ? openAction('Dealer Portal settings', 'Settings controls are connected.', ['Dealership profile', 'Team access and permissions', 'Notification preferences', 'Lender and marketplace integrations']) : setActive(item.id)}>
+          <button type="button" key={item.id} className={active === item.id ? 'active' : ''} onClick={() => item.id === 'settings' ? openDealerSettings() : setActive(item.id)}>
             <DealerIcon name={item.icon} />
             <span>{item.label}</span>
             {item.badge && <em>{item.badge}</em>}
           </button>
         ))}
       </nav>
-      <section className="dealer-side-card"><DealerIcon name="academy" /><div><b>AutoDeFi Academy</b><span>Learn how to grow your dealership</span><button type="button" onClick={() => openAction('AutoDeFi Academy', 'Dealer training and onboarding controls are connected.', ['Funding workflow', 'Inventory and marketplace', 'F&I products', 'Compliance and documentation'])}>View Courses</button></div></section>
-      <section className="dealer-side-card"><DealerIcon name="support" /><div><b>Need Help?</b><span>Dealer support is available</span><button type="button" onClick={() => openAction('Dealer support', 'Support intake is ready for the live help-desk endpoint.', ['Funding support', 'Technical support', 'Compliance questions'])}>Contact Support</button></div></section>
-      <section className="dealer-user"><span>JD</span><div><b>{dealerProfile.user}</b><small>{dealerProfile.userRole}</small></div><button type="button" className="dealer-user-more" aria-label="Open user menu" onClick={() => openAction(dealerProfile.user, 'User account and session controls are connected.', [`Role: ${dealerProfile.userRole}`, 'Profile and team permissions', 'Sign-out and security settings'])}><DealerIcon name="more" size={18} /></button></section>
+      <section className="dealer-side-card"><DealerIcon name="academy" /><div><b>AutoDeFi Academy</b><span>Learn how to grow your dealership</span><button type="button" onClick={() => openAction('AutoDeFi Academy', 'Available dealer training and onboarding courses', ['Funding workflow', 'Inventory and marketplace', 'F&I products', 'Compliance and documentation'])}>View Courses</button></div></section>
+      <section className="dealer-side-card"><DealerIcon name="support" /><div><b>Need Help?</b><span>Dealer support is available</span><button type="button" onClick={openSupport}>Contact Support</button></div></section>
+      <section className="dealer-user"><span>JD</span><div><b>{dealerProfile.user}</b><small>{dealerProfile.userRole}</small></div><button type="button" className="dealer-user-more" aria-label="Open user menu" onClick={() => openAction(dealerProfile.user, 'Dealer user and session summary', [`Role: ${dealerProfile.userRole}`, 'Profile and team permissions', 'Sign-out and security settings'])}><DealerIcon name="more" size={18} /></button></section>
     </aside>
   );
 }
@@ -330,24 +422,63 @@ function DealerSidebar({ active, setActive, collapsed, onToggle, onExit }: { act
 export default function DealerPortal({ onExit }: { onExit: () => void }) {
   const [active, setActive] = useState('dashboard');
   const [collapsed, setCollapsed] = useState(false);
-  const { openAction } = useActionCenter();
+  const [globalSearch, setGlobalSearch] = useState('');
+  const [addedRowsByPage, setAddedRowsByPage] = useState<Record<string, string[][]>>({});
+  const { downloadCsv, openWorkflow } = useActionCenter();
   const page = useMemo(() => dealerPages.find((item) => item.id === active) || dealerPages[0], [active]);
+
+  const selectPage = (id: string) => {
+    setActive(id);
+    setGlobalSearch('');
+  };
+
+  const runDealerAction = (action: string, kind: 'primary' | 'secondary') => {
+    if (action.toLowerCase().includes('export')) {
+      downloadCsv(`dealer-${page.id}.csv`, [page.table.columns, ...page.table.rows]);
+      return;
+    }
+    const fieldColumns = page.table.columns.slice(0, Math.min(3, page.table.columns.length));
+    openWorkflow({
+      title: action,
+      message: kind === 'primary' ? `Create a new ${page.label.toLowerCase()} record in the Dealer Portal frontend.` : `Complete the ${action.toLowerCase()} workflow for ${page.label}.`,
+      details: [`Dealer: ${dealerProfile.name}`, `Location: ${dealerProfile.location}`, 'Approved dealer deals are funded in full after final underwriting approval.'],
+      fields: kind === 'primary' ? [
+        ...fieldColumns.map((column, index) => ({ id: `field-${index}`, label: column, placeholder: `Enter ${column.toLowerCase()}`, required: index === 0 })),
+        { id: 'confirmed', label: 'I reviewed this dealer submission.', type: 'checkbox' as const, required: true },
+      ] : [
+        { id: 'reference', label: 'Reference', placeholder: 'VIN, customer, deal or report period' },
+        { id: 'notes', label: 'Workflow notes', type: 'textarea' as const, required: true },
+        { id: 'confirmed', label: 'Save this workflow to the dealer activity log.', type: 'checkbox' as const, required: true },
+      ],
+      submitLabel: action,
+      successMessage: `${action} completed in the frontend workspace`,
+      onSubmit: kind === 'primary' ? (values) => {
+        const row = page.table.columns.map((_, index) => index < fieldColumns.length ? String(values[`field-${index}`] || `New ${page.label}`) : index === page.table.columns.length - 1 ? 'Draft' : '—');
+        setAddedRowsByPage((current) => ({ ...current, [page.id]: [row, ...(current[page.id] || [])] }));
+      } : () => undefined,
+    });
+  };
 
   return (
     <div className={`dealer-lock${collapsed ? ' dealer-sidebar-collapsed' : ''}`}>
-      <DealerSidebar active={active} setActive={setActive} collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)} onExit={onExit} />
+      <DealerSidebar active={active} setActive={selectPage} collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)} onExit={onExit} />
       <main className="dealer-main">
-        <DealerTopbar page={page} />
+        <DealerTopbar page={page} search={globalSearch} setSearch={setGlobalSearch} />
+        <section className="frontend-status-strip dealer-status-strip" aria-label="Dealer Portal frontend status">
+          <span><i className="status-dot status-dot-green" />Dealer workflows active</span>
+          <span><i className="status-dot status-dot-cyan" />Approved dealer graphics loaded</span>
+          <span><i className="status-dot status-dot-orange" />V1 seed data mode</span>
+        </section>
         <div className="dealer-page-actions">
-          {page.secondaryAction && <button type="button" className="dealer-secondary-button" onClick={() => openAction(page.secondaryAction || 'Dealer action', `${page.secondaryAction} is ready for ${page.label}.`, ['Frontend flow connected', 'Live submission requires the Dealer API'])}>{page.secondaryAction}</button>}
-          {page.primaryAction && <button type="button" className="dealer-primary-button" onClick={() => openAction(page.primaryAction || 'Dealer action', `${page.primaryAction} is ready for ${page.label}.`, ['Required fields and confirmation will be supplied by the Dealer API', 'No live record has been changed'])}><DealerIcon name="plus" size={17} />{page.primaryAction}</button>}
+          {page.secondaryAction && <button type="button" className="dealer-secondary-button" onClick={() => runDealerAction(page.secondaryAction || 'Dealer action', 'secondary')}>{page.secondaryAction}</button>}
+          {page.primaryAction && <button type="button" className="dealer-primary-button" onClick={() => runDealerAction(page.primaryAction || 'Dealer action', 'primary')}><DealerIcon name="plus" size={17} />{page.primaryAction}</button>}
         </div>
         <section className="dealer-metrics-grid">{page.metrics.map((metric) => <MetricCard key={`${page.id}-${metric.label}`} metric={metric} />)}</section>
         <div className="dealer-layout-grid">
           <div className="dealer-content-stack">
             {page.pipeline && <Pipeline stages={page.pipeline} />}
-            <DataTable key={page.id} page={page} />
-            {page.id === 'dashboard' && <section className="dealer-protect"><DealerIcon name="shield" size={40} /><div><h2>Boost Your Sales with AutoDeFi Protect</h2><p>Add F&I products to your deals and increase your profit per vehicle.</p><button type="button" onClick={() => setActive('financing')}>Explore Products</button></div><img src="/assets/dealer/graphics/dealer-neon-vehicle.svg" alt="Neon vehicle graphic" /></section>}
+            <DataTable key={page.id} page={page} globalQuery={globalSearch} addedRows={addedRowsByPage[page.id] || []} />
+            {page.id === 'dashboard' && <section className="dealer-protect"><DealerIcon name="shield" size={40} /><div><h2>Boost Your Sales with AutoDeFi Protect</h2><p>Add F&I products to your deals and increase your profit per vehicle.</p><button type="button" onClick={() => selectPage('financing')}>Explore Products</button></div><img src="/assets/dealer/graphics/dealer-neon-vehicle.svg" alt="Neon vehicle graphic" /></section>}
           </div>
           <aside className="dealer-right-rail">{page.rail.map((card) => <RailCard key={`${page.id}-${card.title}`} card={card} />)}</aside>
         </div>

@@ -2,6 +2,8 @@
 
 This repository now has one production frontend on `main`. The Dashboard Hub routes every approved dashboard through the existing AutoDeFi shell, while the complete source state of every former working branch is retained under `archive/branches/`.
 
+The completed frontend interaction and approved graphic placement standard is documented in `docs/FRONTEND_COMPLETION_AUDIT.md`.
+
 ## Runtime dashboards
 
 | Area | Live route id | Preserved source branch |

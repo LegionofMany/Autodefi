@@ -6,6 +6,7 @@ import './styles/global.css';
 import './styles/svg.css';
 import './styles/hub.css';
 import './styles/actions.css';
+import './styles/workflows.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

@@ -22,7 +22,33 @@ const navGroups = [
 
 export function Shell({ activeView, onNavigate, children }: ShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { openAction } = useActionCenter();
+  const [unreadNotifications, setUnreadNotifications] = useState(12);
+  const [wallet, setWallet] = useState({ account: '0.0.482193', network: 'Hedera Testnet', connected: true });
+  const { openWorkflow } = useActionCenter();
+
+  const openNotifications = () => openWorkflow({
+    title: 'Notification center',
+    message: `${unreadNotifications} unread AutoDeFi notifications are grouped by lender pool, governance, servicing and risk.`,
+    details: ['4 lender-pool updates', '3 governance events', '3 servicing alerts', '2 risk and security alerts'],
+    fields: [{ id: 'markRead', label: 'Mark every notification as read', type: 'checkbox', defaultValue: unreadNotifications > 0 }],
+    submitLabel: 'Update notifications',
+    successMessage: 'Notification preferences updated',
+    onSubmit: (values) => { if (values.markRead) setUnreadNotifications(0); },
+  });
+
+  const openWallet = () => openWorkflow({
+    title: 'Hedera wallet session',
+    message: 'Review the wallet identity used by the AutoDeFi frontend. Private keys never enter the browser interface.',
+    details: ['Hedera / HBAR is the locked V1 network direction.', 'ADF supports staking, collateral, access, rewards and governance.', 'Live signing remains disabled until the approved wallet adapter is connected.'],
+    fields: [
+      { id: 'network', label: 'Network', type: 'select', options: ['Hedera Testnet', 'Hedera Mainnet'], defaultValue: wallet.network, required: true },
+      { id: 'account', label: 'Hedera account ID', defaultValue: wallet.account, placeholder: '0.0.123456', required: true },
+      { id: 'connected', label: 'Keep this frontend wallet session connected', type: 'checkbox', defaultValue: wallet.connected },
+    ],
+    submitLabel: 'Save wallet session',
+    successMessage: 'Wallet session updated',
+    onSubmit: (values) => setWallet({ account: String(values.account), network: String(values.network), connected: Boolean(values.connected) }),
+  });
 
   return (
     <div className={`app-shell${sidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
@@ -70,10 +96,17 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
           </div>
           <div className="wallet-strip">
             <span className="adf-chip"><Icon name="token" size={24} /> ADF&nbsp; <b>$0.8724</b> <em>+ 4.32%</em></span>
-            <button className="bell" type="button" aria-label="Open notifications" onClick={() => openAction('Notifications', 'Your AutoDeFi notification center is connected.', ['12 unread notifications', '4 lender-pool updates', '3 governance events', '5 servicing and risk alerts'])}>◌<sup>12</sup></button>
-            <button className="wallet-button" type="button" aria-label="Open connected wallet" onClick={() => openAction('Connected wallet', 'Wallet 0x7a8B...EF23 is connected to the frontend session.', ['Network and balance refresh controls are ready.', 'Signing and transaction submission require the live wallet adapter.'])}><span />0x7a8B...EF23<small>Connected</small></button>
+            <button className="bell" type="button" aria-label="Open notifications" onClick={openNotifications}>◌{unreadNotifications ? <sup>{unreadNotifications}</sup> : null}</button>
+            <button className="wallet-button" type="button" aria-label="Open connected wallet" onClick={openWallet}><span />{wallet.account}<small>{wallet.connected ? wallet.network : 'Disconnected'}</small></button>
           </div>
         </header>
+
+        <section className="frontend-status-strip" aria-label="AutoDeFi frontend status">
+          <span><i className="status-dot status-dot-green" />Frontend workflows active</span>
+          <span><i className="status-dot status-dot-cyan" />Approved SVG design system loaded</span>
+          <span><i className="status-dot status-dot-purple" />Hedera testnet direction</span>
+          <span><i className="status-dot status-dot-orange" />V1 seed data mode</span>
+        </section>
 
         <section className="top-metrics">
           {topMetrics.map((metric) => <MetricCard key={metric.label} metric={metric} />)}

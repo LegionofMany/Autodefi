@@ -1,0 +1,73 @@
+.market-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.work-queue-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.work-queue-controls label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.work-queue-controls input,
+.work-queue-controls select {
+  min-width: 220px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #050b16;
+  color: #eaf2ff;
+  padding: 10px 12px;
+}
+
+.dealer-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.frontend-status-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 12px 0 2px;
+}
+
+.frontend-status-strip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(5, 13, 25, 0.78);
+  color: #b7c7d9;
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.status-dot-green { background: #00f58a; color: #00f58a; }
+.status-dot-cyan { background: #00e5ff; color: #00e5ff; }
+.status-dot-purple { background: #8a4dff; color: #8a4dff; }
+.status-dot-orange { background: #ff8a00; color: #ff8a00; }
+
+@media (max-width: 720px) {
+  .work-queue-controls,
+  .work-queue-controls label,
+  .work-queue-controls input,
+  .work-queue-controls select {
+    width: 100%;
+  }
+}

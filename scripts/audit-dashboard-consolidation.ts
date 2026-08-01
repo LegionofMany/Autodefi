@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dashboardRegistry, navItems } from '../src/data/autodefiData';
-import { dashboardSvgAssets } from '../src/data/svgAssets';
+import { dashboardGraphicSets, dashboardSvgAssets } from '../src/data/svgAssets';
 
 const failures: string[] = [];
 const navIds = new Set<string>();
@@ -8,6 +8,7 @@ const navIds = new Set<string>();
 for (const item of navItems) {
   if (navIds.has(item.id)) failures.push(`Duplicate navigation id: ${item.id}`);
   navIds.add(item.id);
+  if (!dashboardGraphicSets[item.id]?.length) failures.push(`Navigation destination missing approved graphic placement: ${item.id}`);
 }
 
 for (const dashboard of dashboardRegistry) {
@@ -19,6 +20,15 @@ for (const dashboard of dashboardRegistry) {
   }
   const assetPath = `public${publicAsset}`;
   if (!existsSync(assetPath)) failures.push(`Dashboard SVG does not exist: ${assetPath}`);
+  const graphicSet = dashboardGraphicSets[dashboard.id];
+  if (!graphicSet?.length) failures.push(`Dashboard missing approved graphic placement set: ${dashboard.id}`);
+  for (const asset of graphicSet || []) {
+    if (!existsSync(`public${asset.src}`)) failures.push(`Placed dashboard graphic does not exist: public${asset.src}`);
+  }
+}
+
+for (const [id, expected] of [['ai-underwriter', 12], ['ai-underwriter-v2', 15], ['insurance-claims', 11]] as const) {
+  if (dashboardGraphicSets[id]?.length !== expected) failures.push(`${id} must place all ${expected} approved SVG screens; found ${dashboardGraphicSets[id]?.length || 0}`);
 }
 
 const appSource = readFileSync('src/App.tsx', 'utf8');
@@ -41,4 +51,5 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Dashboard consolidation audit passed (${dashboardRegistry.length} live dashboards, ${archivedBranches.length} archived branches).`);
+const placedGraphics = new Set(Object.values(dashboardGraphicSets).flat().map((asset) => asset.src));
+console.log(`Dashboard consolidation audit passed (${dashboardRegistry.length} live dashboards, ${placedGraphics.size} approved product graphics, ${archivedBranches.length} archived branches).`);
