@@ -32,8 +32,12 @@ for (const [id, expected] of [['ai-underwriter', 12], ['ai-underwriter-v2', 15],
 }
 
 const appSource = readFileSync('src/App.tsx', 'utf8');
-for (const requiredView of ['dashboard-hub', 'dealer-portal', 'InteractivePortal']) {
+for (const requiredView of ['dashboard-hub', 'dealer-portal', 'InteractivePortal', 'LenderPool', 'LoanServicing']) {
   if (!appSource.includes(requiredView)) failures.push(`App router is missing: ${requiredView}`);
+}
+
+for (const file of ['src/pages/LenderPool.tsx', 'src/pages/LoanServicing.tsx']) {
+  if (!existsSync(file)) failures.push(`Recovered portal implementation is missing: ${file}`);
 }
 
 const interactivePortalSource = readFileSync('src/pages/InteractivePortal.tsx', 'utf8');

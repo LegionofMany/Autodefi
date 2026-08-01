@@ -4,6 +4,9 @@ import { DashboardHub } from './pages/DashboardHub';
 
 const DealerPortal = lazy(() => import('./components/dealer/DealerPortal'));
 const InteractivePortal = lazy(() => import('./pages/InteractivePortal').then((module) => ({ default: module.InteractivePortal })));
+const Shell = lazy(() => import('./components/Shell').then((module) => ({ default: module.Shell })));
+const LenderPool = lazy(() => import('./pages/LenderPool').then((module) => ({ default: module.LenderPool })));
+const LoanServicing = lazy(() => import('./pages/LoanServicing').then((module) => ({ default: module.LoanServicing })));
 
 export default function App() {
   const resolveView = useCallback(() => {
@@ -37,6 +40,16 @@ export default function App() {
   }
 
   if (activeView === 'dashboard-hub') return <DashboardHub onNavigate={navigate} />;
+
+  if (activeView === 'lender-pool' || activeView === 'loan-servicing') {
+    return (
+      <Suspense fallback={<div className="portal-route-loading">Opening portal…</div>}>
+        <Shell activeView={activeView} onNavigate={navigate}>
+          {activeView === 'lender-pool' ? <LenderPool /> : <LoanServicing />}
+        </Shell>
+      </Suspense>
+    );
+  }
 
   return <Suspense fallback={<div className="portal-route-loading">Opening portal…</div>}><InteractivePortal id={activeView} onNavigate={navigate} /></Suspense>;
 }

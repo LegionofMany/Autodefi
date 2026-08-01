@@ -9,11 +9,13 @@ const server = await createServer({
 });
 
 try {
-  const [{ default: App }, { DashboardHub }, { InteractivePortal }, { default: DealerPortal }, { dashboardRegistry }, { ActionCenterProvider }] = await Promise.all([
+  const [{ default: App }, { DashboardHub }, { InteractivePortal }, { default: DealerPortal }, { LenderPool }, { LoanServicing }, { dashboardRegistry }, { ActionCenterProvider }] = await Promise.all([
     server.ssrLoadModule('/src/App.tsx'),
     server.ssrLoadModule('/src/pages/DashboardHub.tsx'),
     server.ssrLoadModule('/src/pages/InteractivePortal.tsx'),
     server.ssrLoadModule('/src/components/dealer/DealerPortal.tsx'),
+    server.ssrLoadModule('/src/pages/LenderPool.tsx'),
+    server.ssrLoadModule('/src/pages/LoanServicing.tsx'),
     server.ssrLoadModule('/src/data/autodefiData.ts'),
     server.ssrLoadModule('/src/components/ActionCenter.tsx'),
   ]);
@@ -30,7 +32,7 @@ try {
   }
 
   for (const dashboard of dashboardRegistry) {
-    if (dashboard.id === 'dealer-portal') continue;
+    if (['dealer-portal', 'lender-pool', 'loan-servicing'].includes(dashboard.id)) continue;
     const markup = renderWithActions(createElement(InteractivePortal, { id: dashboard.id, onNavigate: () => undefined }));
     if (!markup.includes('portal-design-viewport')) throw new Error(`${dashboard.id} did not render its approved interactive design surface`);
   }
@@ -38,7 +40,13 @@ try {
   const dealerMarkup = renderWithActions(createElement(DealerPortal, { onExit: () => undefined }));
   if (!dealerMarkup.includes('Dealer Portal')) throw new Error('Dealer Portal did not render');
 
-  console.log(`Render verification passed (${dashboardRegistry.length} portal destinations, approved interactive design surfaces, and Dealer Portal).`);
+  const lenderMarkup = renderWithActions(createElement(LenderPool));
+  if (!lenderMarkup.includes('Risk Tier Pool Allocation')) throw new Error('Lender Pool did not render its full program');
+
+  const servicingMarkup = renderWithActions(createElement(LoanServicing));
+  if (!servicingMarkup.includes('Loan Servicing Center')) throw new Error('Loan Servicing did not render its recovered program');
+
+  console.log(`Render verification passed (${dashboardRegistry.length} portal destinations, distinct Dealer, Lender, and Loan Servicing programs, plus remaining design surfaces).`);
 } finally {
   await server.close();
 }
