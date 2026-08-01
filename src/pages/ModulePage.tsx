@@ -71,7 +71,7 @@ export function ModulePage({ id }: ModulePageProps) {
 
   const openSettings = () => openWorkflow({
     title: `${page.title} settings`,
-    message: 'These preferences update the current frontend workspace without changing the approved dashboard design.',
+    message: 'These preferences update your current workspace.',
     fields: [
       { id: 'density', label: 'Table density', type: 'select', options: ['Comfortable', 'Compact'], defaultValue: 'Comfortable', required: true },
       { id: 'notifications', label: 'Enable dashboard notifications', type: 'checkbox', defaultValue: true },
@@ -87,7 +87,7 @@ export function ModulePage({ id }: ModulePageProps) {
     message: card[1],
     details: [`Owner: AutoDeFi DAO`, `Priority: ${index + 1}`, `Current status: ${statusFor(card[0], index)}`],
     fields: [
-      { id: 'status', label: 'Frontend status', type: 'select', options: ['Healthy', 'In Review', 'Queued'], defaultValue: statusFor(card[0], index), required: true },
+      { id: 'status', label: 'Status', type: 'select', options: ['Healthy', 'In Review', 'Queued'], defaultValue: statusFor(card[0], index), required: true },
       { id: 'note', label: 'Review note', type: 'textarea', placeholder: 'Add an operational note for this record.' },
     ],
     submitLabel: 'Update item',

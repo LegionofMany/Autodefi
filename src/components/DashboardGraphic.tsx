@@ -11,22 +11,22 @@ export function DashboardGraphic({ id, title }: { id: string; title: string }) {
   const select = (index: number) => setActiveIndex(Math.max(0, Math.min(index, assets.length - 1)));
 
   return (
-    <section className="dashboard-graphic-card" aria-label={`${title} approved SVG visual`}>
+    <section className="dashboard-graphic-card" aria-label={`${title} visual`}>
       <div className="dashboard-graphic-stage">
-        <img src={active.src} alt={`${active.label} approved dashboard design`} loading="eager" />
+        <img src={active.src} alt={`${active.label} dashboard`} loading="eager" />
         {assets.length > 1 ? <span className="dashboard-graphic-count">{activeIndex + 1} / {assets.length}</span> : null}
       </div>
       <div className="dashboard-graphic-copy">
-        <span>Approved SVG design</span>
+        <span>{active.label}</span>
         <strong>{active.label}</strong>
-        <small>{title} · Native SVG · GitHub tracked · responsive</small>
+        <small>{title}</small>
         {assets.length > 1 ? (
           <>
             <div className="dashboard-graphic-controls">
               <button type="button" onClick={() => select(activeIndex - 1)} disabled={activeIndex === 0}>← Previous</button>
               <button type="button" onClick={() => select(activeIndex + 1)} disabled={activeIndex === assets.length - 1}>Next →</button>
             </div>
-            <div className="dashboard-graphic-tabs" aria-label={`${title} approved graphic screens`}>
+            <div className="dashboard-graphic-tabs" aria-label={`${title} screens`}>
               {assets.map((asset, index) => <button type="button" key={asset.src} className={index === activeIndex ? 'active' : ''} aria-pressed={index === activeIndex} onClick={() => select(index)}>{asset.label}</button>)}
             </div>
           </>

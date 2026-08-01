@@ -236,7 +236,7 @@ function DataTable({ page, globalQuery, addedRows }: { page: DealerPage; globalQ
 
   const editRow = (row: readonly string[]) => openWorkflow({
     title: `Edit ${row[0]}`,
-    message: `Update the visible ${page.label.toLowerCase()} record in this frontend workspace.`,
+    message: `Update this ${page.label.toLowerCase()} record.`,
     fields: page.table.columns.slice(0, Math.min(4, row.length)).map((column, index) => ({ id: `field-${index}`, label: column, defaultValue: row[index], required: index === 0 })),
     submitLabel: 'Save record',
     successMessage: `${row[0]} updated`,
@@ -324,7 +324,7 @@ function RailCard({ card }: { card: DealerRailCard }) {
     }
     openWorkflow({
       title: item,
-      message: isShareCard ? `Prepare the ${item} referral share from ${dealerProfile.name}.` : `Complete the ${item} frontend workflow from ${card.title}.`,
+      message: isShareCard ? `Prepare the ${item} referral share from ${dealerProfile.name}.` : `Complete ${item} from ${card.title}.`,
       details: isShareCard ? [`Referral code: ${dealerProfile.code}`, `Referral link: ${dealerProfile.referralUrl}`] : [`Dealer: ${dealerProfile.name}`, `Source: ${card.title}`],
       fields: isShareCard ? [
         { id: 'recipient', label: 'Recipient or channel', defaultValue: item, required: true },
@@ -376,7 +376,7 @@ function DealerSidebar({ active, setActive, collapsed, onToggle, onExit }: { act
   const { openAction, openWorkflow } = useActionCenter();
   const openDealerSettings = () => openWorkflow({
     title: 'Dealer Portal settings',
-    message: 'Manage dealership display, notifications and frontend integration preferences.',
+    message: 'Manage dealership display, notifications, and account preferences.',
     fields: [
       { id: 'dealerName', label: 'Dealership name', defaultValue: dealerProfile.name, required: true },
       { id: 'location', label: 'Location', defaultValue: dealerProfile.location, required: true },
@@ -440,7 +440,7 @@ export default function DealerPortal({ onExit }: { onExit: () => void }) {
     const fieldColumns = page.table.columns.slice(0, Math.min(3, page.table.columns.length));
     openWorkflow({
       title: action,
-      message: kind === 'primary' ? `Create a new ${page.label.toLowerCase()} record in the Dealer Portal frontend.` : `Complete the ${action.toLowerCase()} workflow for ${page.label}.`,
+      message: kind === 'primary' ? `Create a new ${page.label.toLowerCase()} record in the Dealer Portal.` : `Complete the ${action.toLowerCase()} workflow for ${page.label}.`,
       details: [`Dealer: ${dealerProfile.name}`, `Location: ${dealerProfile.location}`, 'Approved dealer deals are funded in full after final underwriting approval.'],
       fields: kind === 'primary' ? [
         ...fieldColumns.map((column, index) => ({ id: `field-${index}`, label: column, placeholder: `Enter ${column.toLowerCase()}`, required: index === 0 })),
@@ -451,7 +451,7 @@ export default function DealerPortal({ onExit }: { onExit: () => void }) {
         { id: 'confirmed', label: 'Save this workflow to the dealer activity log.', type: 'checkbox' as const, required: true },
       ],
       submitLabel: action,
-      successMessage: `${action} completed in the frontend workspace`,
+      successMessage: `${action} completed`,
       onSubmit: kind === 'primary' ? (values) => {
         const row = page.table.columns.map((_, index) => index < fieldColumns.length ? String(values[`field-${index}`] || `New ${page.label}`) : index === page.table.columns.length - 1 ? 'Draft' : '—');
         setAddedRowsByPage((current) => ({ ...current, [page.id]: [row, ...(current[page.id] || [])] }));
@@ -464,10 +464,10 @@ export default function DealerPortal({ onExit }: { onExit: () => void }) {
       <DealerSidebar active={active} setActive={selectPage} collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)} onExit={onExit} />
       <main className="dealer-main">
         <DealerTopbar page={page} search={globalSearch} setSearch={setGlobalSearch} />
-        <section className="frontend-status-strip dealer-status-strip" aria-label="Dealer Portal frontend status">
-          <span><i className="status-dot status-dot-green" />Dealer workflows active</span>
-          <span><i className="status-dot status-dot-cyan" />Approved dealer graphics loaded</span>
-          <span><i className="status-dot status-dot-orange" />V1 seed data mode</span>
+        <section className="frontend-status-strip dealer-status-strip" aria-label="Dealer Portal status">
+          <span><i className="status-dot status-dot-green" />Dealer tools available</span>
+          <span><i className="status-dot status-dot-cyan" />Secure workspace</span>
+          <span><i className="status-dot status-dot-orange" />Wallet connection required</span>
         </section>
         <div className="dealer-page-actions">
           {page.secondaryAction && <button type="button" className="dealer-secondary-button" onClick={() => runDealerAction(page.secondaryAction || 'Dealer action', 'secondary')}>{page.secondaryAction}</button>}

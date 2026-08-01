@@ -66,7 +66,7 @@ function MarketActions({ market }: { market: typeof lendingMarkets[number] }) {
   const { openWorkflow } = useActionCenter();
   const openPosition = (action: 'Supply' | 'Stake' | 'Withdraw') => openWorkflow({
     title: `${action} ${market.asset}`,
-    message: `${action} is prepared as a complete frontend confirmation flow for ${market.subtitle}.`,
+    message: `${action} ${market.subtitle}.`,
     details: [`Current APY: ${market.apy}`, `Pool utilization: ${market.utilization}%`, `Hedera remains the locked settlement network for AutoDeFi V1.`],
     fields: [
       { id: 'amount', label: `Amount of ${market.asset}`, type: 'number', placeholder: '0.00', required: true },
@@ -75,7 +75,7 @@ function MarketActions({ market }: { market: typeof lendingMarkets[number] }) {
       { id: 'confirmed', label: 'I reviewed the amount, pool and network.', type: 'checkbox', required: true },
     ],
     submitLabel: `Confirm ${action}`,
-    successMessage: `${action} request added to the frontend activity log`,
+    successMessage: `${action} request added to activity`,
     onSubmit: () => undefined,
   });
   return <div className="market-actions"><Button onClick={() => openPosition(market.action)}>{market.action}</Button><Button variant="ghost" onClick={() => openPosition('Withdraw')}>Withdraw</Button></div>;

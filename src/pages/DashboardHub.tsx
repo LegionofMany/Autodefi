@@ -27,18 +27,18 @@ export function DashboardHub({ onNavigate }: DashboardHubProps) {
           <img src="/assets/svg/logo.svg" alt="" />
           <span><b>AUTO<em>DEFI</em></b><small>Portal Workspace</small></span>
         </a>
-        <div className="portal-hub-status"><i /> 27 portals online</div>
-        <button type="button" className="portal-wallet" onClick={() => openAction('Connected wallet', 'The AutoDeFi frontend wallet session is ready.', ['Address: 0x7a8B...EF23', 'Network: Hedera EVM', 'Live signing connects during backend and wallet-adapter integration.'])}>0x7a8B...EF23 <small>Connected</small></button>
+        <div className="portal-hub-status"><i /> System operational</div>
+        <button type="button" className="portal-wallet" onClick={() => openAction('Connect wallet', 'Choose a supported wallet to continue.', ['HashPack', 'MetaMask', 'WalletConnect'])}>Connect wallet</button>
       </header>
 
       <section className="portal-hub-hero">
         <span>AutoDeFi operating system</span>
         <h1>Choose your portal</h1>
-        <p>Every approved workspace is available from one modern, interactive frontend.</p>
+        <p>One connected workspace for automotive finance, lending, governance, risk, and recovery.</p>
         <div className="portal-hub-stats">
-          <div><strong>27</strong><small>Portal destinations</small></div>
-          <div><strong>55</strong><small>Approved design screens</small></div>
-          <div><strong>100%</strong><small>Frontend route coverage</small></div>
+          <div><strong>27</strong><small>Specialized portals</small></div>
+          <div><strong>24/7</strong><small>Portfolio visibility</small></div>
+          <div><strong>HBAR</strong><small>Hedera network</small></div>
         </div>
       </section>
 

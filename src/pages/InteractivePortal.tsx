@@ -118,7 +118,7 @@ export function InteractivePortal({ id, onNavigate }: InteractivePortalProps) {
     if (/export|download/i.test(label)) {
       downloadCsv(`${id}-${activeAsset.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.csv`, [
         ['Portal', 'Screen', 'Action', 'Status'],
-        [portalTitle, activeAsset.label, label, 'Frontend export generated'],
+        [portalTitle, activeAsset.label, label, 'Export generated'],
       ]);
       return;
     }
@@ -142,24 +142,24 @@ export function InteractivePortal({ id, onNavigate }: InteractivePortalProps) {
     if (/add|apply|approve|bid|buy|claim|connect|create|delegate|deposit|edit|finance|fund|list|make|manage|new|pay|review|save|sell|stake|start|submit|supply|swap|transfer|upload|vote|withdraw/i.test(label)) {
       openWorkflow({
         title: label,
-        message: `Complete this frontend workflow in ${portalTitle}. No transaction is submitted until a live backend and wallet signer are connected.`,
+        message: `Review the ${label.toLowerCase()} details for ${portalTitle}.`,
         fields: [
           { id: 'reference', label: 'Reference', placeholder: 'Account, application, proposal, or asset' },
           { id: 'amount', label: 'Amount', type: 'number', placeholder: '0.00' },
           { id: 'note', label: 'Notes', type: 'textarea', placeholder: 'Add workflow details…' },
-          { id: 'confirmed', label: 'I reviewed the frontend action', type: 'checkbox', defaultValue: false },
+          { id: 'confirmed', label: 'I reviewed these details', type: 'checkbox', defaultValue: false },
         ],
         submitLabel: 'Continue',
-        successMessage: `${label} saved in the frontend session`,
+        successMessage: `${label} saved`,
         onSubmit: () => undefined,
       });
       return;
     }
 
-    openAction(label, `${label} is active in the ${portalTitle} frontend.`, [
+    openAction(label, `${label} is available in ${portalTitle}.`, [
       `Current screen: ${activeAsset.label}`,
-      'The approved visual is rendered directly from the GitHub-tracked SVG.',
-      'Live records and signed transactions connect during backend integration.',
+      'Review the displayed information before continuing.',
+      'Wallet confirmation is required for signed transactions.',
     ]);
   };
 
@@ -211,23 +211,23 @@ export function InteractivePortal({ id, onNavigate }: InteractivePortalProps) {
         <div className="portal-toolbar-title"><span>{portalTitle}</span><strong>{activeAsset.label}</strong></div>
         {assets.length > 1 ? (
           <label className="portal-screen-select"><span>Screen</span><select value={activeIndex} onChange={(event) => setActiveIndex(Number(event.target.value))}>{assets.map((asset, index) => <option value={index} key={asset.src}>{index + 1}. {asset.label}</option>)}</select></label>
-        ) : <span className="portal-single-screen">Approved design</span>}
+        ) : <span className="portal-single-screen">Overview</span>}
         <div className="portal-toolbar-actions">
           <button type="button" onClick={() => setActualSize((current) => !current)}>{actualSize ? 'Fit screen' : 'Actual size'}</button>
           <button type="button" onClick={openFullscreen}>Full screen</button>
-          <button type="button" className="portal-connected" onClick={() => openAction('Frontend connection', `${portalTitle} is online and interactive.`, ['Approved design loaded from GitHub', 'Frontend controls enabled', 'Backend data adapter pending'])}><i /> Interactive</button>
+          <button type="button" className="portal-connected" onClick={() => openAction('Portal status', `${portalTitle} is available.`, ['Interface ready', 'Controls available', 'Wallet connection required for transactions'])}><i /> Online</button>
         </div>
       </header>
 
       {assets.length > 1 ? <nav className="portal-screen-tabs" aria-label={`${portalTitle} screens`}>{assets.map((asset, index) => <button type="button" key={asset.src} className={activeIndex === index ? 'active' : ''} aria-pressed={activeIndex === index} onClick={() => setActiveIndex(index)}>{asset.label}</button>)}</nav> : null}
 
-      <section className={`portal-design-viewport${actualSize ? ' actual-size' : ''}`} aria-label={`${portalTitle} interactive approved design`}>
-        {!markup && !loadError ? <div className="portal-loading"><i /><strong>Loading approved design…</strong></div> : null}
-        {loadError ? <div className="portal-load-error"><strong>The approved design could not be loaded.</strong><p>{loadError}</p><button type="button" onClick={() => window.location.reload()}>Reload portal</button></div> : null}
+      <section className={`portal-design-viewport${actualSize ? ' actual-size' : ''}`} aria-label={`${portalTitle} workspace`}>
+        {!markup && !loadError ? <div className="portal-loading"><i /><strong>Opening workspace…</strong></div> : null}
+        {loadError ? <div className="portal-load-error"><strong>This workspace could not be loaded.</strong><p>{loadError}</p><button type="button" onClick={() => window.location.reload()}>Reload portal</button></div> : null}
         {markup ? <div ref={stageRef} className="portal-svg-surface" onClick={handleStageClick} onKeyDown={handleStageKeyDown} dangerouslySetInnerHTML={{ __html: markup }} /> : null}
       </section>
 
-      <footer className="portal-workspace-footer"><span><i /> Approved GitHub design</span><span>{activeIndex + 1} of {assets.length}</span><span>Highlighted controls respond to click or keyboard</span></footer>
+      <footer className="portal-workspace-footer"><span><i /> Secure workspace</span><span>{activeIndex + 1} of {assets.length}</span><span>Use the portal controls to continue</span></footer>
     </main>
   );
 }

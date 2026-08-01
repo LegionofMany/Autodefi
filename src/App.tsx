@@ -38,5 +38,5 @@ export default function App() {
 
   if (activeView === 'dashboard-hub') return <DashboardHub onNavigate={navigate} />;
 
-  return <Suspense fallback={<div className="portal-route-loading">Loading approved portal design…</div>}><InteractivePortal id={activeView} onNavigate={navigate} /></Suspense>;
+  return <Suspense fallback={<div className="portal-route-loading">Opening portal…</div>}><InteractivePortal id={activeView} onNavigate={navigate} /></Suspense>;
 }

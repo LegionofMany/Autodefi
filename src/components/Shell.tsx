@@ -38,12 +38,12 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
 
   const openWallet = () => openWorkflow({
     title: 'Hedera wallet session',
-    message: 'Review the wallet identity used by the AutoDeFi frontend. Private keys never enter the browser interface.',
-    details: ['Hedera / HBAR is the locked V1 network direction.', 'ADF supports staking, collateral, access, rewards and governance.', 'Live signing remains disabled until the approved wallet adapter is connected.'],
+    message: 'Review the wallet identity used by AutoDeFi. Private keys remain in your wallet.',
+    details: ['Network: Hedera', 'ADF supports staking, collateral, access, rewards, and governance.', 'Wallet confirmation is required for signed transactions.'],
     fields: [
       { id: 'network', label: 'Network', type: 'select', options: ['Hedera Testnet', 'Hedera Mainnet'], defaultValue: wallet.network, required: true },
       { id: 'account', label: 'Hedera account ID', defaultValue: wallet.account, placeholder: '0.0.123456', required: true },
-      { id: 'connected', label: 'Keep this frontend wallet session connected', type: 'checkbox', defaultValue: wallet.connected },
+      { id: 'connected', label: 'Keep this wallet connected', type: 'checkbox', defaultValue: wallet.connected },
     ],
     submitLabel: 'Save wallet session',
     successMessage: 'Wallet session updated',
@@ -101,11 +101,11 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
           </div>
         </header>
 
-        <section className="frontend-status-strip" aria-label="AutoDeFi frontend status">
-          <span><i className="status-dot status-dot-green" />Frontend workflows active</span>
-          <span><i className="status-dot status-dot-cyan" />Approved SVG design system loaded</span>
-          <span><i className="status-dot status-dot-purple" />Hedera testnet direction</span>
-          <span><i className="status-dot status-dot-orange" />V1 seed data mode</span>
+        <section className="frontend-status-strip" aria-label="AutoDeFi status">
+          <span><i className="status-dot status-dot-green" />Services available</span>
+          <span><i className="status-dot status-dot-cyan" />Secure workspace</span>
+          <span><i className="status-dot status-dot-purple" />Hedera network</span>
+          <span><i className="status-dot status-dot-orange" />Wallet connection required</span>
         </section>
 
         <section className="top-metrics">
