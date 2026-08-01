@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">Elite Motors verified dealer badge</title>
+  <desc id="desc">Circular Elite Motors dealer badge placeholder used by the locked Dealer Portal screens.</desc>
+  <defs>
+    <linearGradient id="badge" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#93c5fd"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1677ff"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="45" fill="#020814" stroke="url(#ring)" stroke-width="4"/>
+  <circle cx="48" cy="48" r="37" fill="url(#badge)"/>
+  <path d="M19 53c10-18 17-25 29-25 11 0 20 7 29 25" fill="#0f172a" opacity=".94"/>
+  <path d="M22 56h52c-4 10-13 17-26 17S26 66 22 56Z" fill="#111827"/>
+  <text x="48" y="52" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="9" font-weight="900" fill="#fff">ELITE</text>
+  <text x="48" y="64" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="8" font-weight="800" fill="#93c5fd">MOTORS</text>
+  <circle cx="74" cy="22" r="9" fill="#075cff"/>
+  <path d="m70 22 3 3 6-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,20 @@
+<svg width="210" height="44" viewBox="0 0 210 44" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AutoDeFi Logo</title>
+  <desc id="desc">AutoDeFi blue AD mark with text and DAO badge</desc>
+  <defs>
+    <linearGradient id="adBlue" x1="0" x2="74" y1="0" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#239BFF"/>
+      <stop offset="1" stop-color="#02D5FF"/>
+    </linearGradient>
+    <linearGradient id="daoGrad" x1="132" x2="192" y1="10" y2="34" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3CFF"/>
+      <stop offset="1" stop-color="#3A107F"/>
+    </linearGradient>
+  </defs>
+  <path d="M5 35L20.3 8.5C22.1 5.4 26.7 5.4 28.5 8.5L44 35H34.6L24.4 17.6L14.4 35H5Z" fill="url(#adBlue)"/>
+  <path d="M28.8 35L39.6 16.5H52.2C60.4 16.5 66.2 22.2 66.2 30.2C66.2 38.2 60.4 43.8 52.2 43.8H35.7L40.5 35H52.1C55.2 35 57.5 33 57.5 30.2C57.5 27.3 55.2 25.3 52.1 25.3H44.5L38.8 35H28.8Z" fill="url(#adBlue)"/>
+  <text x="75" y="29" fill="#F7FAFF" font-size="24" font-family="Inter,Arial,sans-serif" font-weight="800" letter-spacing=".4">AUTO</text>
+  <text x="137" y="29" fill="#02B7FF" font-size="24" font-family="Inter,Arial,sans-serif" font-weight="800" letter-spacing=".4">DEFI</text>
+  <rect x="176" y="9" width="34" height="24" rx="6" fill="url(#daoGrad)" stroke="#A66BFF" stroke-width="1"/>
+  <text x="184" y="26" fill="#F7FAFF" font-size="12" font-family="Inter,Arial,sans-serif" font-weight="700">DAO</text>
+</svg>
