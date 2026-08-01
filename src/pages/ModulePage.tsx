@@ -1,4 +1,5 @@
 import { Button } from '../components/Button';
+import { useActionCenter } from '../components/ActionCenter';
 import { Card, CardTitle } from '../components/Card';
 import { DashboardGraphic } from '../components/DashboardGraphic';
 import { Icon } from '../components/Icon';
@@ -44,6 +45,7 @@ const genericCopy: Record<string, ModulePageContent> = {
 };
 
 export function ModulePage({ id }: ModulePageProps) {
+  const { downloadCsv, openAction } = useActionCenter();
   const page: ModulePageContent =
     id in modulePages
       ? modulePages[id as keyof typeof modulePages]
@@ -59,8 +61,8 @@ export function ModulePage({ id }: ModulePageProps) {
             <p>{page.subtitle}</p>
           </div>
           <div className="head-actions">
-            <Button>Export</Button>
-            <Button variant="ghost">Open Settings</Button>
+            <Button onClick={() => downloadCsv(`${id}-report.csv`, [['Metric', 'Detail'], ...page.cards.map((card) => [card[0], card[1]])])}>Export</Button>
+            <Button variant="ghost" onClick={() => openAction(`${page.title} settings`, 'Frontend settings are available for this dashboard.', ['Notification preferences', 'Table density and saved views', 'Role-based controls pending identity service connection'])}>Open Settings</Button>
           </div>
         </div>
 
@@ -94,7 +96,7 @@ export function ModulePage({ id }: ModulePageProps) {
         </div>
 
         <Card>
-          <CardTitle title="Work Queue" action={<Button variant="ghost">View All →</Button>} />
+          <CardTitle title="Work Queue" action={<Button variant="ghost" onClick={() => openAction(`${page.title} work queue`, `${page.cards.length} work-queue groups are available.`, page.cards.map((card) => `${card[0]} — ${card[1]}`))}>View All →</Button>} />
           <table className="data-table">
             <thead><tr><th>Item</th><th>Status</th><th>Owner</th><th>Priority</th><th>Action</th></tr></thead>
             <tbody>
@@ -104,7 +106,7 @@ export function ModulePage({ id }: ModulePageProps) {
                   <td><StatusPill tone={index % 3 === 0 ? 'green' : index % 3 === 1 ? 'blue' : 'orange'}>{index % 3 === 0 ? 'Healthy' : index % 3 === 1 ? 'In Review' : 'Queued'}</StatusPill></td>
                   <td>AutoDeFi DAO</td>
                   <td>{index + 1}</td>
-                  <td><Button variant="ghost">Open</Button></td>
+                  <td><Button variant="ghost" onClick={() => openAction(card[0], card[1], [`Owner: AutoDeFi DAO`, `Priority: ${index + 1}`, `Status: ${index % 3 === 0 ? 'Healthy' : index % 3 === 1 ? 'In Review' : 'Queued'}`])}>Open</Button></td>
                 </tr>
               ))}
             </tbody>

@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { navItems, sideStats, topMetrics, portfolioAllocation, recentActivity } from '../data/autodefiData';
 import { Icon } from './Icon';
 import { MetricCard } from './MetricCard';
 import { DonutChart } from './SvgCharts';
 import { Button } from './Button';
+import { useActionCenter } from './ActionCenter';
 
 type ShellProps = {
   activeView: string;
@@ -19,12 +21,15 @@ const navGroups = [
 ] as const;
 
 export function Shell({ activeView, onNavigate, children }: ShellProps) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { openAction } = useActionCenter();
+
   return (
-    <div className="app-shell">
+    <div className={`app-shell${sidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
       <aside className="sidebar">
         <div className="brand-row">
           <img src="/assets/svg/logo.svg" alt="AutoDeFi" />
-          <button className="menu-button" type="button" aria-label="Menu">☰</button>
+          <button className="menu-button" type="button" aria-label={sidebarCollapsed ? 'Expand menu' : 'Collapse menu'} aria-expanded={!sidebarCollapsed} onClick={() => setSidebarCollapsed((collapsed) => !collapsed)}>☰</button>
         </div>
 
         <div className="supply-card">
@@ -65,8 +70,8 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
           </div>
           <div className="wallet-strip">
             <span className="adf-chip"><Icon name="token" size={24} /> ADF&nbsp; <b>$0.8724</b> <em>+ 4.32%</em></span>
-            <button className="bell" type="button">◌<sup>12</sup></button>
-            <button className="wallet-button" type="button"><span />0x7a8B...EF23<small>Connected</small></button>
+            <button className="bell" type="button" aria-label="Open notifications" onClick={() => openAction('Notifications', 'Your AutoDeFi notification center is connected.', ['12 unread notifications', '4 lender-pool updates', '3 governance events', '5 servicing and risk alerts'])}>◌<sup>12</sup></button>
+            <button className="wallet-button" type="button" aria-label="Open connected wallet" onClick={() => openAction('Connected wallet', 'Wallet 0x7a8B...EF23 is connected to the frontend session.', ['Network and balance refresh controls are ready.', 'Signing and transaction submission require the live wallet adapter.'])}><span />0x7a8B...EF23<small>Connected</small></button>
           </div>
         </header>
 
@@ -78,7 +83,7 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
           <div className="content-main">{children}</div>
           <aside className="right-rail">
             <section className="rail-card">
-              <div className="rail-title"><h3>Your Position</h3><a>View Portfolio →</a></div>
+              <div className="rail-title"><h3>Your Position</h3><button className="link-button" type="button" onClick={() => onNavigate('lender-pool')}>View Portfolio →</button></div>
               <div className="position-grid">
                 <div><span>Total Supplied</span><strong>$6,200.00</strong></div>
                 <div><span>Total Earned (30D)</span><strong>$105.94</strong></div>
@@ -91,7 +96,7 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
                   {portfolioAllocation.map((item) => <span key={item.label}><i className={`dot tone-bg-${item.tone}`} />{item.label}<b>{item.value}%</b></span>)}
                 </div>
               </div>
-              <Button className="full">Manage Portfolio</Button>
+              <Button className="full" onClick={() => onNavigate('lender-pool')}>Manage Portfolio</Button>
             </section>
 
             <section className="rail-card">
@@ -104,11 +109,11 @@ export function Shell({ activeView, onNavigate, children }: ShellProps) {
                 <div><dt>LTV (Avg.)</dt><dd>42.6%</dd></div>
                 <div><dt>Insurance Coverage</dt><dd>92.1%</dd></div>
               </dl>
-              <a className="card-link">View Risk Dashboard →</a>
+              <button className="card-link link-button" type="button" onClick={() => onNavigate('risk-management')}>View Risk Dashboard →</button>
             </section>
 
             <section className="rail-card">
-              <div className="rail-title"><h3>Recent Pool Activity</h3><a>View All →</a></div>
+              <div className="rail-title"><h3>Recent Pool Activity</h3><button className="link-button" type="button" onClick={() => onNavigate('loan-servicing')}>View All →</button></div>
               <div className="activity-list">
                 {recentActivity.map((item) => (
                   <div className="activity-item" key={item.title + item.time}>
