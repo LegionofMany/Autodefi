@@ -7,6 +7,7 @@ const interactiveFiles = [
   'src/components/Shell.tsx',
   'src/components/dealer/DealerPortal.tsx',
   'src/pages/DashboardHub.tsx',
+  'src/pages/InteractivePortal.tsx',
   'src/pages/LenderPool.tsx',
   'src/pages/ModulePage.tsx',
 ];

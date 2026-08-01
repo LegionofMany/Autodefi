@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Shell } from './components/Shell';
-import DealerPortal from './components/dealer/DealerPortal';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { navItems } from './data/autodefiData';
 import { DashboardHub } from './pages/DashboardHub';
-import { LenderPool } from './pages/LenderPool';
-import { ModulePage } from './pages/ModulePage';
+
+const DealerPortal = lazy(() => import('./components/dealer/DealerPortal'));
+const InteractivePortal = lazy(() => import('./pages/InteractivePortal').then((module) => ({ default: module.InteractivePortal })));
 
 export default function App() {
   const resolveView = useCallback(() => {
@@ -34,18 +33,10 @@ export default function App() {
   }, [resolveView]);
 
   if (activeView === 'dealer-portal') {
-    return <DealerPortal onExit={() => navigate('dashboard-hub')} />;
+    return <Suspense fallback={<div className="portal-route-loading">Loading Dealer Portal…</div>}><DealerPortal onExit={() => navigate('dashboard-hub')} /></Suspense>;
   }
 
-  return (
-    <Shell activeView={activeView} onNavigate={navigate}>
-      {activeView === 'dashboard-hub' ? (
-        <DashboardHub onNavigate={navigate} />
-      ) : activeView === 'lender-pool' ? (
-        <LenderPool />
-      ) : (
-        <ModulePage id={activeView} />
-      )}
-    </Shell>
-  );
+  if (activeView === 'dashboard-hub') return <DashboardHub onNavigate={navigate} />;
+
+  return <Suspense fallback={<div className="portal-route-loading">Loading approved portal design…</div>}><InteractivePortal id={activeView} onNavigate={navigate} /></Suspense>;
 }

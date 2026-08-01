@@ -32,8 +32,13 @@ for (const [id, expected] of [['ai-underwriter', 12], ['ai-underwriter-v2', 15],
 }
 
 const appSource = readFileSync('src/App.tsx', 'utf8');
-for (const requiredView of ['dashboard-hub', 'dealer-portal', 'lender-pool', 'ModulePage']) {
+for (const requiredView of ['dashboard-hub', 'dealer-portal', 'InteractivePortal']) {
   if (!appSource.includes(requiredView)) failures.push(`App router is missing: ${requiredView}`);
+}
+
+const interactivePortalSource = readFileSync('src/pages/InteractivePortal.tsx', 'utf8');
+for (const requiredCapability of ['data-portal-action', 'openWorkflow', 'downloadCsv', 'requestFullscreen', 'portal-screen-tabs']) {
+  if (!interactivePortalSource.includes(requiredCapability)) failures.push(`Interactive portal capability is missing: ${requiredCapability}`);
 }
 
 const consolidationDoc = readFileSync('docs/DASHBOARD_CONSOLIDATION.md', 'utf8');

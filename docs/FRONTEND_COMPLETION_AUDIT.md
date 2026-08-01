@@ -15,8 +15,8 @@ Status: frontend implementation complete pending final verification and deployme
 
 - 27 approved dashboard and portal destinations are available from the Dashboard Hub.
 - Every destination is present in shared navigation and browser history routing.
-- All module pages include an approved SVG design placement, operational queue, search, status filtering, detail editing, settings, and CSV export.
-- Lender Pool includes six switchable sections and functional supply, stake, withdraw, report, market, tier, and view controls.
+- The former nested-preview treatment has been removed: approved SVGs now render as the primary, full-window portal design rather than as images inside a second generic dashboard.
+- Every non-dealer destination uses the interactive approved-design surface with portal return navigation, responsive viewport handling, screen selection, fullscreen and zoom controls, search/filter workflows, data exports, and contextual frontend actions.
 - Dealer Portal includes functional navigation, search, tab filtering, selectable filters, list/grid views, pagination, record creation, record editing, quick actions, support, settings, exports, wallet/account summaries, and approved dealer graphics.
 
 ## Approved graphic placement
@@ -32,6 +32,8 @@ Status: frontend implementation complete pending final verification and deployme
 
 - The shared Button component requires an explicit `onClick` handler. There is no generic placeholder fallback.
 - Every native button has an explicit button type and click workflow, except form submit controls handled by the form submit workflow.
+- Action labels and navigation inside the GitHub-tracked SVG designs receive keyboard-accessible interaction targets at runtime without altering the approved artwork.
+- Multi-screen portal sidebars and the workspace screen selector open the corresponding approved design; cross-portal labels return through the shared hash router.
 - Frontend workflows validate required inputs and write the latest 50 confirmed UI actions to versioned browser storage.
 - CSV exports and referral copy controls execute in the browser.
 - Actions requiring live settlement collect and confirm the required frontend data but do not expose private keys or pretend that a Hedera transaction was submitted.

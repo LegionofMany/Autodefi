@@ -11,9 +11,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "lint:types": "tsc -b --pretty",
-    "audit:v1-docs": "tsx scripts/audit-v1-docs.ts",
-    "audit:ai-underwriting-svg-lock": "tsx scripts/audit-ai-underwriting-svg-lock.ts",
-    "audit:consolidated-graphics": "tsx scripts/audit-consolidated-graphics.ts",
+    "audit:v1-docs": "node --import tsx scripts/audit-v1-docs.ts",
+    "audit:ai-underwriting-svg-lock": "node --import tsx scripts/audit-ai-underwriting-svg-lock.ts",
+    "audit:consolidated-graphics": "node --import tsx scripts/audit-consolidated-graphics.ts",
     "audit:dashboard-consolidation": "node --import tsx scripts/audit-dashboard-consolidation.ts",
     "audit:button-wiring": "node --import tsx scripts/audit-button-wiring.ts",
     "verify:dashboard-render": "node --import tsx scripts/verify-dashboard-render.ts"
